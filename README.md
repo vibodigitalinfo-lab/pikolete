@@ -44,7 +44,14 @@ También `https://pikolete.com/api/admin/leads` descarga el CSV directamente (HT
 web auditada y su nota, consentimiento de marketing, país/ciudad/idioma/dispositivo y origen (referer y UTM).
 Nunca se guarda la IP.
 
+## Emails (Cloudflare Email Service)
+
+Al dejar sus datos, el cliente recibe el informe completo en PDF desde `hola@pikolete.com`
+(el servidor vuelve a auditar la web; no confía en datos del navegador). Cada solicitud de presupuesto
+avisa a `NOTIFY_EMAIL`. Sin `CLOUDFLARE_ACCOUNT_ID` / `CLOUDFLARE_EMAIL_TOKEN` no se envía nada y la web
+sigue funcionando. Código en `src/lib/mailer.ts` y `src/lib/notifications.ts`.
+
 ## Limitaciones conocidas (MVP)
 
 - El rate limit es en memoria (por instancia).
-- No se envían emails todavía: el informe se desbloquea y descarga en la web al dejar el email.
+- El rate limit y el antirreenvío de emails son en memoria (por instancia).

@@ -37,10 +37,10 @@ function latin1(text: string): string {
 }
 
 /**
- * Genera y descarga el informe en PDF. Si el informe está desbloqueado es el "Informe oficial"
+ * Construye el informe en PDF (navegador o servidor). Si el informe está desbloqueado es el "Informe oficial"
  * con todas las soluciones; si no, el básico con diagnósticos y las soluciones gratuitas.
  */
-export async function downloadReportPdf(result: AuditResult): Promise<void> {
+export async function buildReportPdf(result: AuditResult) {
   const { jsPDF } = await import("jspdf")
   const doc = new jsPDF({ unit: "pt", format: "a4" })
   const W = doc.internal.pageSize.getWidth()
@@ -203,5 +203,15 @@ export async function downloadReportPdf(result: AuditResult): Promise<void> {
     doc.text(`${i} / ${pages}`, W - M, H - 28, { align: "right" })
   }
 
-  doc.save(`pikolete-${hostKey(result.finalUrl) || "informe"}-${result.ticketId}.pdf`)
+  return doc
+}
+
+export function reportPdfFilename(result: AuditResult): string {
+  return `pikolete-${hostKey(result.finalUrl) || "informe"}-${result.ticketId}.pdf`
+}
+
+/** Genera el PDF en el navegador y lo descarga. */
+export async function downloadReportPdf(result: AuditResult): Promise<void> {
+  const doc = await buildReportPdf(result)
+  doc.save(reportPdfFilename(result))
 }

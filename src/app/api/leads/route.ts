@@ -1,7 +1,8 @@
-import { NextResponse, type NextRequest } from "next/server"
+import { after, NextResponse, type NextRequest } from "next/server"
 
 import { hostKey, PRIVACY_VERSION } from "@/lib/config"
 import { newLeadId, saveLead, type Lead, type LeadProfile, type LeadSource } from "@/lib/leads"
+import { notifyQuoteRequest, sendReportEmail } from "@/lib/notifications"
 import { addUnlock, UNLOCK_COOKIE, unlockCookieOptions } from "@/lib/premium"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
 
@@ -80,6 +81,16 @@ export async function POST(request: NextRequest) {
     console.error("[leads] no se pudo guardar el lead", err)
     return NextResponse.json({ error: "No pudimos guardar tus datos. Inténtalo de nuevo." }, { status: 500 })
   }
+
+  // Los emails se envían después de responder: el usuario no espera a la auditoría ni al PDF.
+  after(async () => {
+    try {
+      const result = lead.type === "quote" ? await notifyQuoteRequest(lead) : await sendReportEmail(lead)
+      if (!result.sent) console.warn(`[leads] email ${lead.type} no enviado: ${result.reason}`)
+    } catch (err) {
+      console.error(`[leads] fallo enviando email ${lead.type}`, err)
+    }
+  })
 
   const res = NextResponse.json({ ok: true })
   const host = lead.auditedUrl ? hostKey(lead.auditedUrl) : ""
