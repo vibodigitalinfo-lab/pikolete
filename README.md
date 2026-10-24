@@ -28,7 +28,9 @@ Sin `BLOB_READ_WRITE_TOKEN`, los leads se guardan en `data/leads.json` (ignorado
 | `src/app/resultados/page.tsx` | Dashboard "La Multa de Pikolete" |
 | `src/app/api/inspect/route.ts` | `POST {url}` → auditoría. Elimina en servidor las soluciones bloqueadas |
 | `src/app/api/leads/route.ts` | Guarda el lead en Vercel Blob privado y desbloquea el informe del dominio |
-| `src/app/api/admin/leads/route.ts` | Exporta los leads en CSV (o `?format=json`), protegido con `ADMIN_PASSWORD` |
+| `src/app/admin/page.tsx` | Panel de contactos (login con `ADMIN_PASSWORD`) |
+| `src/app/api/admin/leads/route.ts` | Exporta los leads en CSV (o `?format=json`) y borra por id |
+| `src/app/api/admin/session/route.ts` | Inicio y cierre de sesión del panel |
 | `src/app/privacidad/page.tsx` | Política de privacidad |
 | `src/lib/audit/engine.ts` | Los 26 controles y el score ponderado |
 | `src/lib/audit/fetch-page.ts` | Descarga segura (anti-SSRF, redirecciones manuales, límites) |
@@ -36,8 +38,9 @@ Sin `BLOB_READ_WRITE_TOKEN`, los leads se guardan en `data/leads.json` (ignorado
 
 ## Ver los leads
 
-Abre `https://pikolete.com/api/admin/leads`, escribe cualquier usuario y la contraseña `ADMIN_PASSWORD`
-y se descarga un CSV listo para Excel. Cada lead guarda: email, nombre, empresa, teléfono, perfil,
+Panel en **`https://pikolete.com/admin`** (contraseña `ADMIN_PASSWORD`): estadísticas, gráfico diario,
+buscador, filtros, ficha de cada contacto, borrado (RGPD) y exportación a CSV.
+También `https://pikolete.com/api/admin/leads` descarga el CSV directamente (HTTP Basic). Cada lead guarda: email, nombre, empresa, teléfono, perfil,
 web auditada y su nota, consentimiento de marketing, país/ciudad/idioma/dispositivo y origen (referer y UTM).
 Nunca se guarda la IP.
 

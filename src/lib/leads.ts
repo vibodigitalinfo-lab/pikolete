@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto"
 import { mkdir, readFile, writeFile } from "node:fs/promises"
 import path from "node:path"
 
-import { get, list, put } from "@vercel/blob"
+import { del, get, list, put } from "@vercel/blob"
 
 export type LeadProfile = "owner" | "agency" | "looking"
 
@@ -66,18 +66,37 @@ export async function saveLead(lead: Lead): Promise<void> {
   await writeFile(LOCAL_FILE, JSON.stringify(existing, null, 2))
 }
 
+async function listPathnames(): Promise<string[]> {
+  const pathnames: string[] = []
+  let cursor: string | undefined
+  do {
+    const page = await list({ prefix: PREFIX, cursor, limit: 1000 })
+    pathnames.push(...page.blobs.map((b) => b.pathname))
+    cursor = page.hasMore ? page.cursor : undefined
+  } while (cursor)
+  return pathnames
+}
+
+/** Borra un lead por id. Devuelve false si no existe. */
+export async function deleteLead(id: string): Promise<boolean> {
+  if (blobEnabled()) {
+    const pathname = (await listPathnames()).find((p) => p.endsWith(`-${id}.json`))
+    if (!pathname) return false
+    await del(pathname)
+    return true
+  }
+  const existing = JSON.parse(await readFile(LOCAL_FILE, "utf8").catch(() => "[]")) as Lead[]
+  const kept = existing.filter((l) => l.id !== id)
+  if (kept.length === existing.length) return false
+  await writeFile(LOCAL_FILE, JSON.stringify(kept, null, 2))
+  return true
+}
+
 /** Todos los leads, del más reciente al más antiguo. */
 export async function listLeads(): Promise<Lead[]> {
   let leads: Lead[]
   if (blobEnabled()) {
-    const pathnames: string[] = []
-    let cursor: string | undefined
-    do {
-      const page = await list({ prefix: PREFIX, cursor, limit: 1000 })
-      pathnames.push(...page.blobs.map((b) => b.pathname))
-      cursor = page.hasMore ? page.cursor : undefined
-    } while (cursor)
-
+    const pathnames = await listPathnames()
     leads = []
     // Lotes pequeños para no saturar la API de Blob.
     for (let i = 0; i < pathnames.length; i += 20) {
