@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# leads provisionales
+/data
+
+# config local de Claude
+/.claude

@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pikolete Inspector · Auditor Web & SEO Express
 
-## Getting Started
+Micro-SaaS de [pikolete.com](https://pikolete.com): pegas una URL y el "agente Pikolete" la inspecciona
+(SEO, velocidad, seguridad SSL y estructura), le pone una nota de 0 a 100 y emite una "multa" con el
+diagnóstico de cada fallo. Las 3 soluciones más urgentes son gratis; el resto y el PDF oficial se
+desbloquean por $9.99 con un Stripe Payment Link.
 
-First, run the development server:
+## Stack
+
+Next.js 16 (App Router, TypeScript) · Tailwind CSS 4 · shadcn/ui (Radix) · lucide-react · framer-motion ·
+cheerio (análisis HTML) · jsPDF (informes).
+
+## Desarrollo
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sin Stripe configurado, en desarrollo aparece el botón **"Desbloquear (modo demo)"**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estructura
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Ruta | Qué hace |
+| --- | --- |
+| `src/app/page.tsx` | Landing (hero, prueba social, qué revisamos, precios, FAQ) |
+| `src/app/resultados/page.tsx` | Dashboard "La Multa de Pikolete" |
+| `src/app/api/inspect/route.ts` | `POST {url}` → auditoría. Elimina en servidor las soluciones bloqueadas |
+| `src/app/api/unlock/verify/route.ts` | Retorno de Stripe: verifica el pago y firma la cookie de desbloqueo |
+| `src/app/api/unlock/demo/route.ts` | Desbloqueo de prueba (solo dev o `PIKOLETE_DEMO_UNLOCK=true`) |
+| `src/app/api/leads/route.ts` | Guarda emails y solicitudes de presupuesto en `data/leads.json` |
+| `src/lib/audit/engine.ts` | Los 26 controles y el score ponderado |
+| `src/lib/audit/fetch-page.ts` | Descarga segura (anti-SSRF, redirecciones manuales, límites) |
+| `src/lib/pdf.ts` | Generación del informe PDF en el navegador |
 
-## Learn More
+## Configurar el cobro con Stripe
 
-To learn more about Next.js, take a look at the following resources:
+1. Crea un Payment Link de $9.99 en Stripe.
+2. En "Después del pago" elige *Redirigir a tu web* con:
+   `https://TU-DOMINIO/api/unlock/verify?session_id={CHECKOUT_SESSION_ID}`
+3. Define en Vercel: `NEXT_PUBLIC_STRIPE_PAYMENT_LINK`, `STRIPE_SECRET_KEY` y `PIKOLETE_UNLOCK_SECRET`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+El dominio auditado viaja en `client_reference_id`; al volver, el servidor consulta la sesión en Stripe y,
+si está pagada, firma una cookie HMAC válida 30 días para ese dominio.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Limitaciones conocidas (MVP)
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `data/leads.json` no persiste en Vercel (disco de solo lectura): conecta un CRM, Resend o una base de datos.
+- El rate limit es en memoria (por instancia).
+- No se envían emails todavía: el informe básico se descarga al dejar el email.
