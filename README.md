@@ -44,12 +44,13 @@ También `https://pikolete.com/api/admin/leads` descarga el CSV directamente (HT
 web auditada y su nota, consentimiento de marketing, país/ciudad/idioma/dispositivo y origen (referer y UTM).
 Nunca se guarda la IP.
 
-## Emails (Cloudflare Email Service)
+## Emails (Resend, gratis)
 
 Al dejar sus datos, el cliente recibe el informe completo en PDF desde `hola@pikolete.com`
 (el servidor vuelve a auditar la web; no confía en datos del navegador). Cada solicitud de presupuesto
-avisa a `NOTIFY_EMAIL`. Sin `CLOUDFLARE_ACCOUNT_ID` / `CLOUDFLARE_EMAIL_TOKEN` no se envía nada y la web
-sigue funcionando. Código en `src/lib/mailer.ts` y `src/lib/notifications.ts`.
+avisa a `NOTIFY_EMAIL`. Se usa Resend si existe `RESEND_API_KEY` (plan gratuito: 3.000/mes, 100/día);
+como alternativa, Cloudflare Email Sending con `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_EMAIL_TOKEN`.
+Sin ninguno no se envía nada y la web sigue funcionando. Código en `src/lib/mailer.ts` y `src/lib/notifications.ts`.
 
 ## Limitaciones conocidas (MVP)
 

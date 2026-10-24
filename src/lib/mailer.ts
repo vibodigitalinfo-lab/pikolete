@@ -19,36 +19,61 @@ export type MailResult = { sent: true } | { sent: false; reason: string }
 
 /** Desde hola@ para que las respuestas lleguen por Email Routing al buzón real. */
 const DEFAULT_FROM = "Pikolete Inspector <hola@pikolete.com>"
+const from = () => process.env.EMAIL_FROM || DEFAULT_FROM
 
-export function mailerConfigured(): boolean {
-  return Boolean(process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CLOUDFLARE_EMAIL_TOKEN)
+type Provider = "resend" | "cloudflare" | null
+
+/** Resend (plan gratuito) tiene prioridad; Cloudflare Email Sending queda como alternativa de pago. */
+function provider(): Provider {
+  if (process.env.RESEND_API_KEY) return "resend"
+  if (process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CLOUDFLARE_EMAIL_TOKEN) return "cloudflare"
+  return null
 }
 
-/**
- * Envía un email con Cloudflare Email Service (REST API).
- * Sin CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_EMAIL_TOKEN no envía nada y lo indica en el resultado.
- */
-export async function sendMail(message: MailMessage): Promise<MailResult> {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-  const token = process.env.CLOUDFLARE_EMAIL_TOKEN
-  if (!accountId || !token) return { sent: false, reason: "mailer no configurado" }
+export function mailerConfigured(): boolean {
+  return provider() !== null
+}
 
-  const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/email/sending/send`, {
+async function sendWithResend(message: MailMessage): Promise<MailResult> {
+  const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from: process.env.EMAIL_FROM || DEFAULT_FROM,
-      to: message.to,
+      from: from(),
+      to: [message.to],
       subject: message.subject,
       html: message.html,
       text: message.text,
       ...(message.attachments?.length
-        ? { attachments: message.attachments.map((a) => ({ ...a, disposition: "attachment" })) }
+        ? { attachments: message.attachments.map((a) => ({ filename: a.filename, content: a.content })) }
         : {}),
     }),
     signal: AbortSignal.timeout(15_000),
   })
+  if (res.ok) return { sent: true }
+  const body = (await res.json().catch(() => null)) as { message?: string } | null
+  return { sent: false, reason: body?.message || `HTTP ${res.status}` }
+}
 
+async function sendWithCloudflare(message: MailMessage): Promise<MailResult> {
+  const res = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/email/sending/send`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.CLOUDFLARE_EMAIL_TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: from(),
+        to: message.to,
+        subject: message.subject,
+        html: message.html,
+        text: message.text,
+        ...(message.attachments?.length
+          ? { attachments: message.attachments.map((a) => ({ ...a, disposition: "attachment" })) }
+          : {}),
+      }),
+      signal: AbortSignal.timeout(15_000),
+    }
+  )
   const body = (await res.json().catch(() => null)) as
     | { success?: boolean; errors?: Array<{ message?: string }>; result?: { permanent_bounces?: string[] } }
     | null
@@ -57,4 +82,16 @@ export async function sendMail(message: MailMessage): Promise<MailResult> {
   }
   if (body.result?.permanent_bounces?.length) return { sent: false, reason: "rebote permanente" }
   return { sent: true }
+}
+
+/** Envía un email con el proveedor configurado. Sin ninguno, no envía nada y lo indica en el resultado. */
+export async function sendMail(message: MailMessage): Promise<MailResult> {
+  switch (provider()) {
+    case "resend":
+      return sendWithResend(message)
+    case "cloudflare":
+      return sendWithCloudflare(message)
+    default:
+      return { sent: false, reason: "ningún proveedor de email configurado" }
+  }
 }
