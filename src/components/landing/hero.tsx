@@ -25,7 +25,7 @@ export function Hero() {
           <InspectForm className="mt-8 max-w-2xl" />
           <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <li className="flex items-center gap-1.5">
-              <BadgeCheck className="size-4 text-success" /> Gratis, sin registro
+              <BadgeCheck className="size-4 text-success" /> 100% gratis
             </li>
             <li className="flex items-center gap-1.5">
               <Clock className="size-4 text-primary" /> Resultado en segundos

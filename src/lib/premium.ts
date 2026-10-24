@@ -14,12 +14,6 @@ function secret(): string | null {
   return process.env.NODE_ENV === "production" ? null : "pikolete-dev-only-secret"
 }
 
-/** Desbloqueo sin pago: solo en desarrollo sin Stripe o si se activa explícitamente. */
-export function demoUnlockEnabled(): boolean {
-  if (process.env.PIKOLETE_DEMO_UNLOCK === "true") return true
-  return process.env.NODE_ENV !== "production" && !process.env.STRIPE_SECRET_KEY
-}
-
 function sign(payload: string, key: string): string {
   return createHmac("sha256", key).update(payload).digest("base64url").slice(0, 32)
 }

@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { PikoleteLogo } from "@/components/brand/pikolete-logo"
 import { siteConfig } from "@/lib/config"
 
@@ -14,6 +16,9 @@ export function SiteFooter() {
           <a href={`mailto:${siteConfig.quoteEmail}`} className="hover:text-foreground">
             {siteConfig.quoteEmail}
           </a>
+          <Link href="/privacidad" className="hover:text-foreground">
+            Privacidad
+          </Link>
           <span>© pikolete.com</span>
         </div>
       </div>

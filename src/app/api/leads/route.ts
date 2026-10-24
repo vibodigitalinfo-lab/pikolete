@@ -1,58 +1,95 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises"
-import path from "node:path"
-
 import { NextResponse, type NextRequest } from "next/server"
 
+import { hostKey, PRIVACY_VERSION } from "@/lib/config"
+import { newLeadId, saveLead, type Lead, type LeadProfile, type LeadSource } from "@/lib/leads"
+import { addUnlock, UNLOCK_COOKIE, unlockCookieOptions } from "@/lib/premium"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
 
-
-export interface Lead {
-  type: "report" | "quote"
-  email: string
-  url?: string
-  score?: number
-  name?: string
-  message?: string
-  createdAt: string
-}
-
-/** Almacenamiento provisional en JSON. En producción, sustitúyelo por tu CRM o base de datos. */
-const LEADS_FILE = path.join(process.cwd(), "data", "leads.json")
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+const PROFILES: LeadProfile[] = ["owner", "agency", "looking"]
 
 const clip = (value: unknown, max: number) =>
   typeof value === "string" && value.trim() ? value.trim().slice(0, max) : undefined
+const int = (value: unknown) => (typeof value === "number" && Number.isFinite(value) ? Math.round(value) : undefined)
 
+function decodeHeader(value: string | null): string | undefined {
+  if (!value) return undefined
+  try {
+    return decodeURIComponent(value).slice(0, 80)
+  } catch {
+    return value.slice(0, 80)
+  }
+}
+
+/**
+ * Guarda un lead. Si es de tipo "report", además desbloquea el informe completo del dominio
+ * auditado: el "pago" del servicio gratuito son los datos de contacto.
+ */
 export async function POST(request: NextRequest) {
   if (!rateLimit(`leads:${clientIp(request.headers)}`, 8, 60_000)) {
     return NextResponse.json({ error: "Demasiadas solicitudes. Espera un momento." }, { status: 429 })
   }
 
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
-  const email = clip(body?.email, 254)
+  const email = clip(body?.email, 254)?.toLowerCase()
   if (!email || !EMAIL_RE.test(email)) {
     return NextResponse.json({ error: "Introduce un email válido." }, { status: 400 })
   }
+  if (body?.privacyAccepted !== true) {
+    return NextResponse.json({ error: "Debes aceptar la política de privacidad." }, { status: 400 })
+  }
+
+  const rawSource = (body?.source ?? {}) as Record<string, unknown>
+  const source: LeadSource = {
+    referrer: clip(rawSource.referrer, 500),
+    landingPath: clip(rawSource.landingPath, 500),
+    utmSource: clip(rawSource.utmSource, 100),
+    utmMedium: clip(rawSource.utmMedium, 100),
+    utmCampaign: clip(rawSource.utmCampaign, 100),
+  }
+  const profile = PROFILES.find((p) => p === body?.profile)
+  const ua = request.headers.get("user-agent") ?? ""
 
   const lead: Lead = {
+    id: newLeadId(),
     type: body?.type === "quote" ? "quote" : "report",
-    email,
-    url: clip(body?.url, 2048),
-    score: typeof body?.score === "number" ? body.score : undefined,
-    name: clip(body?.name, 120),
-    message: clip(body?.message, 2000),
     createdAt: new Date().toISOString(),
+    email,
+    name: clip(body?.name, 120),
+    company: clip(body?.company, 120),
+    phone: clip(body?.phone, 40),
+    profile,
+    message: clip(body?.message, 2000),
+    auditedUrl: clip(body?.auditedUrl, 2048),
+    score: int(body?.score),
+    grade: clip(body?.grade, 1),
+    fails: int(body?.fails),
+    warns: int(body?.warns),
+    marketingOptIn: body?.marketingOptIn === true,
+    privacyVersion: PRIVACY_VERSION,
+    source,
+    country: request.headers.get("x-vercel-ip-country") ?? undefined,
+    city: decodeHeader(request.headers.get("x-vercel-ip-city")),
+    language: request.headers.get("accept-language")?.split(",")[0]?.trim().slice(0, 20),
+    device: /mobile|android|iphone/i.test(ua) ? "mobile" : "desktop",
   }
 
   try {
-    await mkdir(path.dirname(LEADS_FILE), { recursive: true })
-    const existing = JSON.parse(await readFile(LEADS_FILE, "utf8").catch(() => "[]")) as Lead[]
-    existing.push(lead)
-    await writeFile(LEADS_FILE, JSON.stringify(existing, null, 2))
+    await saveLead(lead)
   } catch (err) {
-    // En plataformas con disco de solo lectura (p. ej. Vercel) no se puede escribir el JSON.
-    console.warn("[leads] no se pudo guardar en disco; lead:", lead, err)
+    console.error("[leads] no se pudo guardar el lead", err)
+    return NextResponse.json({ error: "No pudimos guardar tus datos. Inténtalo de nuevo." }, { status: 500 })
   }
 
-  return NextResponse.json({ ok: true })
+  const res = NextResponse.json({ ok: true })
+  const host = lead.auditedUrl ? hostKey(lead.auditedUrl) : ""
+  if (lead.type === "report" && host) {
+    try {
+      res.cookies.set(UNLOCK_COOKIE, addUnlock(request.cookies.get(UNLOCK_COOKIE)?.value, host), unlockCookieOptions)
+    } catch (err) {
+      // El lead ya está guardado: no devolvemos error al usuario por un fallo de configuración.
+      console.error("[leads] no se pudo firmar la cookie de desbloqueo", err)
+    }
+  }
+  return res
 }

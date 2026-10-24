@@ -8,8 +8,12 @@ const FAQS = [
     a: "No. Pikolete solo visita tu página pública, igual que haría Google o cualquier visitante. No tocamos nada.",
   },
   {
-    q: "¿Qué incluye el informe de pago?",
-    a: `Por ${siteConfig.price} desbloqueas la guía paso a paso y el código de solución de todas las infracciones, más el informe PDF oficial para compartir con tu equipo o tu desarrollador.`,
+    q: "¿De verdad es gratis?",
+    a: "Sí. La inspección es gratis y sin registro. Para ver todas las soluciones y descargar el PDF oficial solo te pedimos tu email: no hay tarjeta ni pagos.",
+  },
+  {
+    q: "¿Qué hacéis con mis datos?",
+    a: `Los usamos para darte acceso al informe y, si lo pides, prepararte un presupuesto. Solo te enviamos ofertas si marcas la casilla. No los vendemos ni los cedemos, y puedes pedir que los borremos escribiendo a ${siteConfig.quoteEmail}.`,
   },
   {
     q: "¿Sustituye a una auditoría SEO completa?",

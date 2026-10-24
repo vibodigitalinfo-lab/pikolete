@@ -5,7 +5,6 @@ import { Check, CircleCheck, CircleX, Copy, Lock, TriangleAlert } from "lucide-r
 
 import { Button } from "@/components/ui/button"
 import type { AuditCheck } from "@/lib/audit/types"
-import { siteConfig } from "@/lib/config"
 import { cn } from "@/lib/utils"
 
 const STATUS = {
@@ -83,10 +82,10 @@ export function IssueItem({ check, onUnlock }: { check: AuditCheck; onUnlock: ()
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-card/40 p-4 text-center">
                 <p className="flex items-center gap-1.5 text-sm font-semibold">
                   <Lock className="size-4 text-primary" />
-                  Desbloquea la guía de solución en código/paso a paso y el informe PDF oficial por {siteConfig.price}
+                  Desbloquea gratis la guía de solución paso a paso y el informe PDF oficial
                 </p>
                 <Button size="sm" onClick={onUnlock}>
-                  Desbloquear solución
+                  Desbloquear gratis
                 </Button>
               </div>
             </div>

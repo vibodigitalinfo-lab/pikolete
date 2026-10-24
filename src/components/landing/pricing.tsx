@@ -7,24 +7,22 @@ import { cn } from "@/lib/utils"
 
 const PLANS = [
   {
-    name: "Inspección gratis",
-    price: "$0",
-    note: "para siempre",
-    features: ["Nota de 0 a 100", "Todas las infracciones con diagnóstico", "3 soluciones completas", "Informe básico en PDF"],
-    cta: "Inspeccionar gratis",
+    name: "Inspección express",
+    price: "Gratis",
+    note: "sin registro",
+    features: ["Nota de 0 a 100", "Todas las infracciones con diagnóstico", "Las 3 soluciones más urgentes"],
     featured: false,
   },
   {
-    name: "Informe oficial",
-    price: siteConfig.price,
-    note: "pago único por web",
+    name: "Informe completo",
+    price: "Gratis",
+    note: "solo con tu email",
     features: [
-      "Todo lo del plan gratis",
+      "Todo lo de la inspección express",
       "Guía de solución paso a paso de cada fallo",
       "Código listo para copiar y pegar",
       "Informe PDF oficial descargable",
     ],
-    cta: "Empezar inspección",
     featured: true,
   },
 ]
@@ -33,9 +31,9 @@ export function Pricing() {
   return (
     <section id="precios" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">Paga solo si te sirve</h2>
+        <h2 className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">Gratis. De verdad.</h2>
         <p className="mt-3 text-muted-foreground">
-          La inspección es gratis. El informe completo cuesta menos que un café con tostada.
+          Sin tarjeta y sin letra pequeña. Para el informe completo solo te pedimos tu email.
         </p>
       </div>
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
@@ -49,7 +47,7 @@ export function Pricing() {
           >
             {plan.featured && (
               <span className="absolute -top-3 left-7 rounded-full bg-badge px-3 py-1 text-xs font-bold text-badge-foreground">
-                Más elegido
+                El más completo
               </span>
             )}
             <h3 className="text-lg font-bold">{plan.name}</h3>
@@ -66,7 +64,7 @@ export function Pricing() {
               ))}
             </ul>
             <Button asChild className="mt-7" variant={plan.featured ? "default" : "outline"} size="lg">
-              <Link href="/#inspeccion">{plan.cta}</Link>
+              <Link href="/#inspeccion">Inspeccionar mi web</Link>
             </Button>
           </article>
         ))}

@@ -168,7 +168,7 @@ export async function downloadReportPdf(result: AuditResult): Promise<void> {
         }
       } else if (check.locked) {
         paragraph(
-          `Solucion bloqueada. Desbloquea el informe oficial por ${siteConfig.price} en ${siteConfig.url.replace("https://", "")}`,
+          `Solucion bloqueada. Desbloquea gratis el informe oficial en ${siteConfig.url.replace("https://", "")}`,
           9,
           AMBER,
           "helvetica",
@@ -187,10 +187,10 @@ export async function downloadReportPdf(result: AuditResult): Promise<void> {
     doc.setFont("helvetica", "bold")
     doc.setFontSize(12)
     doc.setTextColor(255, 255, 255)
-    doc.text(latin1(`Desbloquea todas las soluciones por ${siteConfig.price}`), M + 16, y + 26)
+    doc.text(latin1("Desbloquea gratis todas las soluciones"), M + 16, y + 26)
     doc.setFont("helvetica", "normal")
     doc.setFontSize(9.5)
-    doc.text(latin1("Guia paso a paso, codigo listo para copiar e informe PDF oficial."), M + 16, y + 44)
+    doc.text(latin1(`Guia paso a paso, codigo listo para copiar e informe oficial en ${siteConfig.url.replace("https://", "")}`), M + 16, y + 44)
   }
 
   const pages = doc.getNumberOfPages()

@@ -15,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { readVisitSource } from "@/components/site/source-tracker"
+import Link from "next/link"
 import type { AuditResult } from "@/lib/audit/types"
 import { siteConfig } from "@/lib/config"
 
@@ -35,9 +37,16 @@ export function QuoteCta({ result }: { result: AuditResult }) {
         type: "quote",
         name: form.get("name"),
         email: form.get("email"),
+        phone: form.get("phone"),
+        company: form.get("company"),
         message: form.get("message"),
-        url: result.finalUrl,
+        privacyAccepted: form.get("privacy") === "on",
+        marketingOptIn: form.get("marketing") === "on",
+        profile: "looking",
+        auditedUrl: result.finalUrl,
         score: result.score,
+        grade: result.grade,
+        source: readVisitSource(),
       }),
     }).catch(() => null)
     if (!res?.ok) {
@@ -87,10 +96,34 @@ export function QuoteCta({ result }: { result: AuditResult }) {
                 <Label htmlFor="quote-email">Email</Label>
                 <Input id="quote-email" name="email" type="email" autoComplete="email" required />
               </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="quote-phone">Teléfono (opcional)</Label>
+                  <Input id="quote-phone" name="phone" type="tel" autoComplete="tel" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="quote-company">Empresa (opcional)</Label>
+                  <Input id="quote-company" name="company" autoComplete="organization" />
+                </div>
+              </div>
               <div className="space-y-1.5">
                 <Label htmlFor="quote-message">¿Algo que debamos saber? (opcional)</Label>
                 <Textarea id="quote-message" name="message" rows={3} placeholder="CMS, plazos, presupuesto aproximado…" />
               </div>
+              <label className="flex items-start gap-2 text-xs text-muted-foreground">
+                <input type="checkbox" name="privacy" required className="mt-0.5 size-4 accent-[var(--primary)]" />
+                <span>
+                  Acepto la{" "}
+                  <Link href="/privacidad" target="_blank" className="font-medium text-primary underline">
+                    política de privacidad
+                  </Link>{" "}
+                  *
+                </span>
+              </label>
+              <label className="flex items-start gap-2 text-xs text-muted-foreground">
+                <input type="checkbox" name="marketing" className="mt-0.5 size-4 accent-[var(--primary)]" />
+                <span>Quiero recibir consejos de SEO y ofertas de Pikolete por email (opcional).</span>
+              </label>
               {error && (
                 <p role="alert" className="text-sm font-medium text-danger">
                   {error}

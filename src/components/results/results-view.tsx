@@ -7,10 +7,9 @@ import { CircleCheck, CircleX, FileDown, Gauge, LayoutTemplate, Lock, PartyPoppe
 
 import { PikoleteMascot } from "@/components/brand/pikolete-logo"
 import { InspectForm } from "@/components/landing/inspect-form"
-import { EmailCapture } from "@/components/results/email-capture"
 import { InspectionLoader } from "@/components/results/inspection-loader"
 import { IssueItem } from "@/components/results/issue-item"
-import { PremiumUnlock } from "@/components/results/premium-unlock"
+import { LeadGate } from "@/components/results/lead-gate"
 import { QuoteCta } from "@/components/results/quote-dialog"
 import { ScoreGauge } from "@/components/results/score-gauge"
 import { Button } from "@/components/ui/button"
@@ -44,9 +43,10 @@ async function fetchAudit(url: string): Promise<State> {
   }
 }
 
-export function ResultsView({ url, justUnlocked }: { url: string; justUnlocked: boolean }) {
+export function ResultsView({ url }: { url: string }) {
   const [state, setState] = useState<State>({ status: "loading" })
-  const premiumRef = useRef<HTMLDivElement>(null)
+  const [justUnlocked, setJustUnlocked] = useState(false)
+  const gateRef = useRef<HTMLDivElement>(null)
 
   const inspect = useCallback(
     async (showLoader: boolean) => {
@@ -97,14 +97,14 @@ export function ResultsView({ url, justUnlocked }: { url: string; justUnlocked: 
   const warns = issues.length - fails
   const passes = result.checks.length - issues.length
   const lockedCount = result.checks.filter((c) => c.locked).length
-  const scrollToPremium = () => premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+  const scrollToGate = () => gateRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:py-12">
       {justUnlocked && result.unlocked && (
         <div className="mb-6 flex items-center gap-3 rounded-xl border border-success/30 bg-success/10 p-4 text-sm font-medium">
           <PartyPopper className="size-5 text-success" />
-          ¡Pago recibido! Todas las soluciones y el informe PDF oficial están desbloqueados.
+          ¡Gracias! Ya tienes desbloqueadas todas las soluciones y el informe PDF oficial.
         </div>
       )}
 
@@ -145,8 +145,8 @@ export function ResultsView({ url, justUnlocked }: { url: string; justUnlocked: 
                   <FileDown /> Descargar informe PDF oficial
                 </Button>
               ) : (
-                <Button onClick={scrollToPremium}>
-                  <Lock /> Informe PDF oficial
+                <Button onClick={scrollToGate}>
+                  <Lock /> Informe completo gratis
                 </Button>
               )}
               <Button variant="outline" onClick={() => void inspect(true)}>
@@ -189,7 +189,7 @@ export function ResultsView({ url, justUnlocked }: { url: string; justUnlocked: 
                   ) : (
                     <ul className="space-y-3">
                       {tabIssues.map((check) => (
-                        <IssueItem key={check.id} check={check} onUnlock={scrollToPremium} />
+                        <IssueItem key={check.id} check={check} onUnlock={scrollToGate} />
                       ))}
                     </ul>
                   )}
@@ -201,7 +201,7 @@ export function ResultsView({ url, justUnlocked }: { url: string; justUnlocked: 
                       </summary>
                       <ul className="space-y-3 px-3 pb-3">
                         {passed.map((check) => (
-                          <IssueItem key={check.id} check={check} onUnlock={scrollToPremium} />
+                          <IssueItem key={check.id} check={check} onUnlock={scrollToGate} />
                         ))}
                       </ul>
                     </details>
@@ -212,11 +212,15 @@ export function ResultsView({ url, justUnlocked }: { url: string; justUnlocked: 
           </Tabs>
 
           {!result.unlocked && lockedCount > 0 && (
-            <PremiumUnlock
-              ref={premiumRef}
-              url={result.finalUrl}
+            <LeadGate
+              ref={gateRef}
+              result={result}
               lockedCount={lockedCount}
-              onDemoUnlocked={() => void inspect(false)}
+              onUnlocked={() => {
+                setJustUnlocked(true)
+                window.scrollTo({ top: 0, behavior: "smooth" })
+                void inspect(false)
+              }}
             />
           )}
 
@@ -224,7 +228,25 @@ export function ResultsView({ url, justUnlocked }: { url: string; justUnlocked: 
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-          <EmailCapture result={result} />
+          {result.unlocked ? (
+            <div className="rounded-2xl border bg-card p-6">
+              <h2 className="font-bold">Tu informe oficial</h2>
+              <p className="mt-1 text-sm text-muted-foreground">Todas las soluciones, listo para compartir con tu equipo.</p>
+              <Button className="mt-4 w-full" onClick={() => void downloadReportPdf(result)}>
+                <FileDown /> Descargar PDF
+              </Button>
+            </div>
+          ) : (
+            <div className="rounded-2xl border-2 border-badge bg-badge/10 p-6">
+              <h2 className="font-bold">Informe completo gratis</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Desbloquea las {lockedCount} soluciones restantes y el PDF oficial solo con tu email.
+              </p>
+              <Button className="mt-4 w-full" onClick={scrollToGate}>
+                <Lock /> Desbloquear gratis
+              </Button>
+            </div>
+          )}
           <div className="rounded-2xl border bg-card p-6 text-sm">
             <h2 className="font-bold">Cómo se lee tu multa</h2>
             <ul className="mt-3 space-y-2 text-muted-foreground">
@@ -235,7 +257,7 @@ export function ResultsView({ url, justUnlocked }: { url: string; justUnlocked: 
                 <TriangleAlert className="size-4 shrink-0 text-warning" /> Advertencia: mejora recomendada.
               </li>
               <li className="flex gap-2">
-                <Lock className="size-4 shrink-0 text-primary" /> Las {FREE_FIXES} soluciones más urgentes son gratis.
+                <Lock className="size-4 shrink-0 text-primary" /> Las {FREE_FIXES} soluciones más urgentes se ven sin registrarte.
               </li>
             </ul>
           </div>

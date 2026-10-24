@@ -12,8 +12,7 @@ export const metadata: Metadata = {
 async function Results({ searchParams }: { searchParams: PageProps<"/resultados">["searchParams"] }) {
   const params = await searchParams
   const url = typeof params.url === "string" ? params.url : ""
-  const justUnlocked = params.desbloqueado === "1"
-  return <ResultsView key={url} url={url} justUnlocked={justUnlocked} />
+  return <ResultsView key={url} url={url} />
 }
 
 export default function ResultadosPage({ searchParams }: PageProps<"/resultados">) {
