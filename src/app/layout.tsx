@@ -40,6 +40,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <head>
+        {siteConfig.adsense.client && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${siteConfig.adsense.client}`}
+            crossOrigin="anonymous"
+          />
+        )}
+      </head>
       <body className="flex min-h-full flex-col font-sans">
         <SourceTracker />
         <SiteHeader />

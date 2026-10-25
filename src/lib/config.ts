@@ -4,6 +4,14 @@ export const siteConfig = {
   url: "https://pikolete.com",
   quoteEmail: process.env.NEXT_PUBLIC_QUOTE_EMAIL ?? "hola@pikolete.com",
   auditedCount: "+1.000",
+  /** Google AdSense: ID de editor y bloques de anuncio (opcionales; sin bloque, solo anuncios automáticos). */
+  adsense: {
+    client: process.env.NEXT_PUBLIC_ADSENSE_CLIENT ?? "ca-pub-9478834967463774",
+    slots: {
+      landing: process.env.NEXT_PUBLIC_ADSENSE_SLOT_LANDING ?? "",
+      results: process.env.NEXT_PUBLIC_ADSENSE_SLOT_RESULTS ?? "",
+    },
+  },
   /** Datos del responsable del tratamiento (RGPD/LSSI). Completa nombre legal y NIF. */
   legal: {
     owner: process.env.NEXT_PUBLIC_LEGAL_OWNER ?? "",

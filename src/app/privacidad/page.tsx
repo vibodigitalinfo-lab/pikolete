@@ -57,10 +57,6 @@ export default function PrivacidadPage() {
             consentimiento al enviar el formulario (art. 6.1.a RGPD).
           </li>
           <li>
-            <strong>Preparar el presupuesto que solicites.</strong> Base legal: aplicación de medidas precontractuales a
-            petición tuya (art. 6.1.b RGPD).
-          </li>
-          <li>
             <strong>Enviarte consejos y ofertas por email</strong>, solo si marcas la casilla correspondiente. Base legal:
             tu consentimiento, que puedes retirar en cualquier momento.
           </li>
@@ -84,6 +80,15 @@ export default function PrivacidadPage() {
           como encargado del tratamiento. Los datos se guardan en servidores de la Unión Europea (Frankfurt). Vercel está
           adherida al Marco de Privacidad de Datos UE-EE. UU., que ampara cualquier acceso técnico desde Estados Unidos.
         </p>
+        <p>
+          Para financiar el servicio mostramos anuncios de Google AdSense (Google Ireland Ltd.). Google puede usar cookies
+          e identificadores de tu dispositivo para mostrar y medir anuncios, y en su caso personalizarlos, siempre según
+          lo que elijas en el aviso de consentimiento. Más información en{" "}
+          <a className="text-primary underline" href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer">
+            cómo usa Google las cookies en publicidad
+          </a>
+          .
+        </p>
       </Section>
 
       <Section title="6. Tus derechos">
@@ -97,9 +102,15 @@ export default function PrivacidadPage() {
 
       <Section title="7. Cookies y almacenamiento local">
         <p>
-          Solo usamos una cookie técnica (<code>pk_unlock</code>) que recuerda que has desbloqueado el informe de un
-          dominio durante 30 días, y almacenamiento de sesión del navegador para recordar por qué página llegaste. No
-          usamos cookies publicitarias ni de terceros, por lo que no necesitan tu consentimiento.
+          Usamos una cookie técnica propia (<code>pk_unlock</code>) que recuerda que has desbloqueado el informe de un
+          dominio durante 30 días, y almacenamiento de sesión del navegador para recordar por qué página llegaste. Estas
+          no necesitan tu consentimiento.
+        </p>
+        <p>
+          Además, Google AdSense instala cookies de terceros para mostrar anuncios. Al entrar por primera vez verás un
+          aviso de consentimiento de Google donde puedes aceptarlas, rechazarlas o elegir sus finalidades. Si las
+          rechazas, solo verás anuncios no personalizados. Puedes cambiar tu elección en cualquier momento desde el
+          enlace de privacidad que aparece en ese aviso o borrando las cookies de tu navegador.
         </p>
       </Section>
     </article>

@@ -11,9 +11,11 @@ import { InspectionLoader } from "@/components/results/inspection-loader"
 import { IssueItem } from "@/components/results/issue-item"
 import { LeadGate } from "@/components/results/lead-gate"
 import { ScoreGauge } from "@/components/results/score-gauge"
+import { AdSlot } from "@/components/site/ad-slot"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FREE_FIXES, rankIssues } from "@/lib/audit/gating"
+import { siteConfig } from "@/lib/config"
 import type { AuditErrorBody, AuditResult, CheckCategory } from "@/lib/audit/types"
 import { downloadReportPdf } from "@/lib/pdf"
 
@@ -222,6 +224,8 @@ export function ResultsView({ url }: { url: string }) {
               }}
             />
           )}
+
+          <AdSlot slot={siteConfig.adsense.slots.results} />
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
