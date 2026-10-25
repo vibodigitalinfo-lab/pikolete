@@ -106,3 +106,8 @@ Sin ninguno no se envía nada y la web sigue funcionando. Código en `src/lib/ma
 
 ¿Has encontrado un fallo o tienes una idea? Abre un *issue*. Si encuentras un problema de seguridad,
 escribe a **hola@pikolete.com** en lugar de publicarlo.
+
+## Licencia
+
+Código bajo licencia [MIT](LICENSE). El nombre «Pikolete», su logo y el dominio pikolete.com no forman parte
+de la licencia: si haces tu propia versión, ponle otro nombre.
