@@ -57,6 +57,10 @@ export default function PrivacidadPage() {
             <strong>No guardamos tu dirección IP.</strong>
           </li>
         </ul>
+        <p>
+          Si usas <strong>«¿Es fiable esta web?»</strong>, no guardamos la dirección que compruebas ni el resultado. Para
+          saber la antigüedad del dominio consultamos su fecha de registro en el servicio público RDAP (rdap.org).
+        </p>
       </Section>
 
       <Section title="3. Para qué los usamos y base legal">

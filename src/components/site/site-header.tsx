@@ -11,6 +11,10 @@ export function SiteHeader() {
           <PikoleteLogo />
         </Link>
         <nav className="flex items-center gap-1 text-sm">
+          <Link href="/es-fiable" className="rounded-md px-3 py-2 font-semibold text-primary hover:text-foreground">
+            <span className="sm:hidden">¿Es fiable?</span>
+            <span className="hidden sm:inline">¿Es fiable una web?</span>
+          </Link>
           <Link href="/#que-revisamos" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:block">
             Qué revisamos
           </Link>
