@@ -19,6 +19,9 @@ export function SiteFooter() {
           <Link href="/es-fiable" className="hover:text-foreground">
             ¿Es fiable esta web?
           </Link>
+          <Link href="/es-fiable/tiendas" className="hover:text-foreground">
+            Tiendas populares
+          </Link>
           <Link href="/aviso-legal" className="hover:text-foreground">
             Aviso legal
           </Link>

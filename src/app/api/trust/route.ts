@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import { InspectError } from "@/lib/audit/fetch-page"
 import { clientIp, rateLimits } from "@/lib/rate-limit"
 import { runTrustCheck } from "@/lib/trust/engine"
-import { domainSlug, isPublishable, recordChecked } from "@/lib/trust/recent"
+import { domainSlug, isPublishableResult, recordChecked } from "@/lib/trust/recent"
 import type { TrustErrorBody } from "@/lib/trust/types"
 
 export const maxDuration = 30
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   try {
     const result = await runTrustCheck(url)
     const slug = domainSlug(url)
-    const publishable = slug !== null && isPublishable(slug)
+    const publishable = slug !== null && isPublishableResult(slug, result)
     if (publishable) await recordChecked(slug)
     return NextResponse.json({ ...result, slug: publishable ? slug : null }, { headers: { "Cache-Control": "no-store" } })
   } catch (err) {

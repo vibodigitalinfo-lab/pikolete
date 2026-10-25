@@ -58,7 +58,9 @@ export default function PrivacidadPage() {
           </li>
         </ul>
         <p>
-          Si usas <strong>«¿Es fiable esta web?»</strong>, no guardamos la dirección que compruebas ni el resultado. Para
+          Si usas <strong>«¿Es fiable esta web?»</strong>, no guardamos ningún dato tuyo ni quién hizo la comprobación.
+          Cuando la web comprobada es una tienda online y el resultado es «Pinta fiable» o «Ve con cuidado», guardamos
+          solo el nombre de su dominio para publicar su ficha en /es-fiable. El resto de resultados no se guarda. Para
           saber la antigüedad del dominio consultamos su fecha de registro en el servicio público RDAP (rdap.org).
         </p>
       </Section>

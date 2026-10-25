@@ -4,7 +4,7 @@ import * as cheerio from "cheerio"
 
 import { fetchPage, InspectError, isTlsError, normalizeUrl, USER_AGENT, type FetchedPage } from "@/lib/audit/fetch-page"
 
-import type { SignalStatus, TrustLevel, TrustResult, TrustSignal } from "./types"
+import type { SignalStatus, SiteKind, TrustLevel, TrustResult, TrustSignal } from "./types"
 
 const STATUS_FACTOR: Record<Exclude<SignalStatus, "unknown">, number> = { good: 1, warn: 0.5, bad: 0 }
 
@@ -370,6 +370,19 @@ export function analyzeTrust({
     })
   }
 
+  // Un blog o la web de una empresa no tiene por qué dar CIF y teléfono en portada como una tienda:
+  // que falten es un aviso, no una alerta.
+  const kind: SiteKind = !readable ? "desconocido" : isShop ? "tienda" : "web"
+  if (kind === "web") {
+    for (const s of signals) {
+      if (s.id === "company") s.weight = 5
+      if ((s.id === "legal" || s.id === "company" || s.id === "contact") && s.status === "bad") {
+        s.status = "warn"
+        if (s.id === "legal") s.detail = "No encontramos aviso legal ni condiciones. Si la web tiene actividad económica, la LSSI obliga a publicarlos."
+      }
+    }
+  }
+
   let score = computeTrustScore(signals)
   // Un dominio de pocos meses o sin HTTPS no puede salir como "fiable" aunque lo demás esté bien.
   const redFlag = (ageDays !== null && ageDays < 180) || !https || signals.some((s) => s.id === "domain" && s.status === "bad")
@@ -383,6 +396,7 @@ export function analyzeTrust({
     host: finalHost.replace(/^www\./, ""),
     score,
     level: readable || redFlag ? levelFor(score) : "incompleto",
+    kind,
     signals,
     domainAgeDays: ageDays,
     checkedAt: new Date().toISOString(),

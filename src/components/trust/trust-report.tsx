@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import { AlertTriangle, CheckCircle2, HelpCircle, ShieldAlert, ShieldCheck, XCircle } from "lucide-react"
 
-import type { SignalStatus, TrustLevel, TrustResult } from "@/lib/trust/types"
+import type { SignalStatus, SiteKind, TrustLevel, TrustResult } from "@/lib/trust/types"
 import { cn } from "@/lib/utils"
 
 export const LEVELS: Record<TrustLevel, { title: string; text: string; tone: string; Icon: typeof ShieldCheck }> = {
@@ -31,6 +31,20 @@ export const LEVELS: Record<TrustLevel, { title: string; text: string; tone: str
   },
 }
 
+/** En una web que no vende, hablar de "comprar" o "pagar" no tiene sentido. */
+const WEB_TEXT: Partial<Record<TrustLevel, string>> = {
+  fiable: "Las señales que hemos revisado son buenas.",
+  precaucion:
+    "Le faltan datos que suelen tener las webs serias, como el aviso legal o el contacto. En una web informativa no es grave, pero no le des datos personales sin revisarlo.",
+  riesgo: "Tiene señales que suelen tener las webs fraudulentas. No le des datos personales ni de pago.",
+}
+
+const KIND_LABEL: Record<SiteKind, string | null> = {
+  tienda: "Tienda online",
+  web: "Web informativa (no vende)",
+  desconocido: null,
+}
+
 const STATUS_ICON: Record<SignalStatus, { Icon: typeof CheckCircle2; className: string; label: string }> = {
   good: { Icon: CheckCircle2, className: "text-success", label: "Bien" },
   warn: { Icon: AlertTriangle, className: "text-warning", label: "Atención" },
@@ -43,6 +57,8 @@ const ORDER: Record<SignalStatus, number> = { bad: 0, warn: 1, unknown: 2, good:
 /** Resultado de una comprobación: veredicto, señales y aviso. Sirve tanto en el comprobador como en las páginas de dominio. */
 export function TrustReport({ result, ad }: { result: TrustResult; ad?: ReactNode }) {
   const level = LEVELS[result.level]
+  const text = (result.kind === "web" && WEB_TEXT[result.level]) || level.text
+  const kindLabel = KIND_LABEL[result.kind]
   const signals = [...result.signals].sort((a, b) => ORDER[a.status] - ORDER[b.status])
 
   return (
@@ -50,9 +66,12 @@ export function TrustReport({ result, ad }: { result: TrustResult; ad?: ReactNod
       <div className={cn("flex flex-col gap-4 rounded-2xl border p-6 sm:flex-row sm:items-center", level.tone)}>
         <level.Icon className="size-12 shrink-0" />
         <div className="flex-1">
-          <p className="text-sm font-semibold tracking-wide uppercase opacity-80">{result.host}</p>
+          <p className="text-sm font-semibold tracking-wide uppercase opacity-80">
+            {result.host}
+            {kindLabel && <span className="font-normal normal-case"> · {kindLabel}</span>}
+          </p>
           <p className="text-2xl font-extrabold">{level.title}</p>
-          <p className="mt-1 text-foreground/80">{level.text}</p>
+          <p className="mt-1 text-foreground/80">{text}</p>
         </div>
         <div className="text-center">
           <p className="text-4xl font-extrabold">{result.level === "incompleto" ? "?" : result.score}</p>

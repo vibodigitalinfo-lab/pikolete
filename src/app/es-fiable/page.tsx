@@ -134,7 +134,7 @@ export default function EsFiablePage() {
               <Clock className="size-4 text-primary" /> Resultado en segundos
             </li>
             <li className="flex items-center gap-1.5">
-              <Lock className="size-4 text-primary" /> No guardamos lo que compruebas
+              <Lock className="size-4 text-primary" /> No guardamos tus datos
             </li>
           </ul>
         </div>
@@ -154,12 +154,23 @@ export default function EsFiablePage() {
 
       <AdSlot slot={siteConfig.adsense.slots.landing} className="mx-auto max-w-6xl px-4 pb-16" />
 
+      <section className="mx-auto w-full max-w-3xl px-4 pb-16">
+        <Link
+          href="/es-fiable/tiendas"
+          className="block rounded-2xl border bg-card p-6 transition-colors hover:border-primary"
+        >
+          <p className="text-xl font-extrabold text-primary">¿Son fiables las tiendas más populares? →</p>
+          <p className="mt-1 text-muted-foreground">
+            Amazon, AliExpress, Zalando, Wallapop, Decathlon… Mira la ficha de las tiendas más usadas en España.
+          </p>
+        </Link>
+      </section>
+
       <TrustGuide />
 
       <Suspense fallback={null}>
         <RecentChecks />
       </Suspense>
-
 
       <section className="mx-auto w-full max-w-3xl px-4 pb-16">
         <h2 className="text-center text-3xl font-extrabold tracking-tight text-primary">Preguntas frecuentes</h2>

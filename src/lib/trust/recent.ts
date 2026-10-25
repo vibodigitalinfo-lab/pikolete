@@ -3,8 +3,10 @@ import "server-only"
 import { redisConfig } from "@/lib/rate-limit"
 
 import { registrableDomain } from "./engine"
+import type { TrustResult } from "./types"
 
-const KEY = "pk:trust:recent"
+// Clave nueva desde que solo publicamos tiendas con buen resultado: la anterior incluía cualquier web comprobada.
+const KEY = "pk:trust:published"
 const MAX_DOMAINS = 5_000
 
 /** Dominios que no queremos publicar en páginas indexables aunque alguien los compruebe. */
@@ -33,6 +35,15 @@ export function isPublishable(domain: string): boolean {
   return DOMAIN_RE.test(domain) && !BLOCKED_WORDS.test(domain) && domain !== "pikolete.com"
 }
 
+/**
+ * Solo damos página pública a tiendas en las que no vemos señales graves. Un blog no pinta nada en
+ * «¿Es fiable…?», y publicar «Señales de riesgo» junto al nombre de alguien sería dejarle mal en Google
+ * por una revisión automática. Esos resultados se ven en el comprobador y no se guardan.
+ */
+export function isPublishableResult(domain: string, result: TrustResult): boolean {
+  return isPublishable(domain) && result.kind === "tienda" && (result.level === "fiable" || result.level === "precaucion")
+}
+
 async function redis(commands: Array<Array<string | number>>): Promise<Array<{ result?: unknown }> | null> {
   const config = redisConfig()
   if (!config) return null
@@ -50,7 +61,7 @@ async function redis(commands: Array<Array<string | number>>): Promise<Array<{ r
   }
 }
 
-/** Guarda el dominio comprobado para enlazarlo desde /es-fiable y el sitemap. Solo el nombre, nada del usuario. */
+/** Guarda el dominio publicable para enlazarlo desde /es-fiable y el sitemap. Solo el nombre, nada del usuario. */
 export async function recordChecked(domain: string): Promise<void> {
   if (!isPublishable(domain)) return
   await redis([
