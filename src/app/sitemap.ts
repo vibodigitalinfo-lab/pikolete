@@ -4,14 +4,15 @@ import { cacheLife } from "next/cache"
 import { GUIDES } from "@/content/guides"
 import { PRIVACY_VERSION, siteConfig } from "@/lib/config"
 import { CONTENT_UPDATED } from "@/lib/seo"
-import { recentDomains } from "@/lib/trust/recent"
+import { indexableRecentDomains } from "@/lib/trust/recent"
 import { publishedPopularStores } from "@/lib/trust/report"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   "use cache"
   cacheLife("hours")
 
-  const [recent, popular] = await Promise.all([recentDomains(5_000), publishedPopularStores()])
+  // Solo fichas indexables: un sitemap lleno de URLs con noindex o casi vacías resta confianza.
+  const [recent, popular] = await Promise.all([indexableRecentDomains(1_000), publishedPopularStores()])
   const domains = [...new Set([...popular.flatMap((g) => g.domains), ...recent])]
   return [
     {
@@ -47,6 +48,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
+    {
+      url: `${siteConfig.url}/metodologia`,
+      lastModified: CONTENT_UPDATED,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${siteConfig.url}/sobre-pikolete`,
+      lastModified: CONTENT_UPDATED,
+      changeFrequency: "yearly",
+      priority: 0.4,
+    },
     {
       url: `${siteConfig.url}/aviso-legal`,
       lastModified: PRIVACY_VERSION,
