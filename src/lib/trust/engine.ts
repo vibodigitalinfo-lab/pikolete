@@ -2,7 +2,7 @@ import "server-only"
 
 import * as cheerio from "cheerio"
 
-import { fetchPage, InspectError, isTlsError, normalizeUrl, type FetchedPage } from "@/lib/audit/fetch-page"
+import { fetchPage, InspectError, isTlsError, normalizeUrl, USER_AGENT, type FetchedPage } from "@/lib/audit/fetch-page"
 
 import type { SignalStatus, TrustLevel, TrustResult, TrustSignal } from "./types"
 
@@ -38,8 +38,9 @@ export function registrableDomain(host: string): string {
 async function domainAgeDays(domain: string): Promise<number | null> {
   try {
     const res = await fetch(`https://rdap.org/domain/${encodeURIComponent(domain)}`, {
-      headers: { Accept: "application/rdap+json" },
-      signal: AbortSignal.timeout(4_000),
+      // rdap.org responde 403 a peticiones sin User-Agent de navegador o bot identificado.
+      headers: { Accept: "application/rdap+json", "User-Agent": USER_AGENT },
+      signal: AbortSignal.timeout(5_000),
       cache: "no-store",
     })
     if (!res.ok) return null
@@ -104,19 +105,21 @@ export async function runTrustCheck(input: string): Promise<TrustResult> {
   const finalDomain = registrableDomain(finalHost)
   const ageDays = finalDomain === startDomain ? startAge : await domainAgeDays(finalDomain)
 
-  return analyzeTrust({ input, finalUrl: page.finalUrl, html: page.html, sslError, ageDays })
+  return analyzeTrust({ input, finalUrl: page.finalUrl, status: page.status, html: page.html, sslError, ageDays })
 }
 
 /** Parte sin red del análisis: recibe la página ya descargada y la edad del dominio. */
 export function analyzeTrust({
   input,
   finalUrl,
+  status,
   html,
   sslError,
   ageDays,
 }: {
   input: string
   finalUrl: URL
+  status: number
   html: string
   sslError: boolean
   ageDays: number | null
@@ -126,6 +129,7 @@ export function analyzeTrust({
   const finalDomain = registrableDomain(finalHost)
 
   const $ = cheerio.load(html)
+  const pageTitle = $("title").first().text()
   $("script, style, noscript, template").remove()
   const text = $("body").text().replace(/\s+/g, " ")
   const lower = text.toLowerCase()
@@ -133,6 +137,14 @@ export function analyzeTrust({
     .map((_, el) => `${$(el).text()} ${$(el).attr("href") ?? ""}`.toLowerCase())
     .get()
   const hasLink = (re: RegExp) => links.some((l) => re.test(l))
+
+  // Las grandes tiendas suelen bloquear a los robots (Cloudflare, Akamai…) o pintar todo con JavaScript.
+  // Sin contenido no podemos juzgar el aviso legal ni el contacto: mejor "sin datos" que un falso "mal".
+  const readable =
+    status < 400 &&
+    links.length >= 5 &&
+    text.length >= 300 &&
+    !/just a moment|attention required|access denied|acceso denegado|captcha|are you a robot|verificando/i.test(pageTitle)
 
   const isShop =
     /(carrito|cesta|añadir al carrito|agregar al carrito|comprar ahora|checkout|finalizar compra|envío gratis|envio gratis)/i.test(lower) ||
@@ -189,6 +201,8 @@ export function analyzeTrust({
         : "La web no usa HTTPS: lo que escribas viaja sin cifrar. No pagues ni des datos aquí.",
     weight: 15,
   })
+
+  const contentStart = signals.length
 
   // 3. Aviso legal / términos
   const legal = hasLink(/aviso[\s-]?legal|t[eé]rminos|condiciones|legal|terms/)
@@ -315,6 +329,17 @@ export function analyzeTrust({
     weight: 4,
   })
 
+  if (!readable) {
+    signals.splice(contentStart, signals.length - contentStart, {
+      id: "content",
+      label: "Contenido de la web",
+      status: "unknown",
+      detail:
+        "La web no deja que la leamos (tiene protección contra robots o se carga solo con JavaScript), así que no hemos podido revisar su aviso legal, contacto ni devoluciones. Míralos tú antes de pagar.",
+      weight: 0,
+    })
+  }
+
   // 11. Nombre del dominio
   const tld = finalDomain.split(".").pop() ?? ""
   const domainName = finalDomain.slice(0, finalDomain.length - tld.length - 1)
@@ -346,15 +371,17 @@ export function analyzeTrust({
 
   let score = computeTrustScore(signals)
   // Un dominio de pocos meses o sin HTTPS no puede salir como "fiable" aunque lo demás esté bien.
+  const redFlag = (ageDays !== null && ageDays < 180) || !https || signals.some((s) => s.id === "domain" && s.status === "bad")
   if (ageDays !== null && ageDays < 180) score = Math.min(score, 49)
   if (!https) score = Math.min(score, 45)
+  if (!readable && redFlag) score = Math.min(score, 45)
 
   return {
     url: input,
     finalUrl: finalUrl.toString(),
     host: finalHost.replace(/^www\./, ""),
     score,
-    level: levelFor(score),
+    level: readable || redFlag ? levelFor(score) : "incompleto",
     signals,
     domainAgeDays: ageDays,
     checkedAt: new Date().toISOString(),

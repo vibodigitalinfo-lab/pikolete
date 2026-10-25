@@ -31,6 +31,12 @@ const LEVELS: Record<TrustLevel, { title: string; text: string; tone: string; Ic
     tone: "text-danger border-danger/40 bg-danger/10",
     Icon: ShieldAlert,
   },
+  incompleto: {
+    title: "No hemos podido revisarla a fondo",
+    text: "La web no deja que la leamos entera. En lo que sí hemos visto no hay señales graves, pero revisa tú el aviso legal y las opiniones antes de pagar.",
+    tone: "text-primary border-border bg-card",
+    Icon: HelpCircle,
+  },
 }
 
 const STATUS_ICON: Record<SignalStatus, { Icon: typeof CheckCircle2; className: string; label: string }> = {
@@ -156,7 +162,7 @@ export function TrustChecker() {
               <p className="mt-1 text-foreground/80">{level.text}</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-extrabold">{result.score}</p>
+              <p className="text-4xl font-extrabold">{result.level === "incompleto" ? "?" : result.score}</p>
               <p className="text-xs font-semibold uppercase opacity-80">de 100</p>
             </div>
           </div>

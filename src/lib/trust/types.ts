@@ -10,7 +10,8 @@ export interface TrustSignal {
   weight: number
 }
 
-export type TrustLevel = "fiable" | "precaucion" | "riesgo"
+/** "incompleto": la web no se deja leer y no hay señales graves en lo que sí vemos. */
+export type TrustLevel = "fiable" | "precaucion" | "riesgo" | "incompleto"
 
 export interface TrustResult {
   url: string
