@@ -29,7 +29,8 @@ export function isValidDomainSlug(slug: string): boolean {
 }
 
 export function isPublishable(domain: string): boolean {
-  return DOMAIN_RE.test(domain) && !BLOCKED_WORDS.test(domain)
+  // pikolete.com tampoco: una página "¿Es fiable pikolete.com?" con el dominio recién registrado no nos ayuda.
+  return DOMAIN_RE.test(domain) && !BLOCKED_WORDS.test(domain) && domain !== "pikolete.com"
 }
 
 async function redis(commands: Array<Array<string | number>>): Promise<Array<{ result?: unknown }> | null> {
