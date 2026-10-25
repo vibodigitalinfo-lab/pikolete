@@ -72,7 +72,6 @@ ${
         .join("")}</ul>`
     : `<p>¡Enhorabuena! No hemos encontrado infracciones.</p>`
 }
-<p>¿Prefieres que lo arreglemos nosotros? Responde a este email y te preparamos un presupuesto sin compromiso.</p>
 <p style="margin:24px 0 8px"><a href="${siteConfig.url}/resultados?url=${encodeURIComponent(result.finalUrl)}" style="background:${NAVY};color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:bold;display:inline-block">Ver el informe online</a></p>
 <p style="color:#6e7387;font-size:13px">— El equipo de Pikolete</p>`
   )
@@ -84,7 +83,6 @@ ${
     "Adjuntamos el informe oficial en PDF con la solución paso a paso de cada fallo.",
     ...top.map((c) => `- ${c.title}: ${c.diagnosis}`),
     "",
-    "¿Quieres que lo arreglemos nosotros? Responde a este email.",
     `${siteConfig.url}`,
   ].join("\n")
 

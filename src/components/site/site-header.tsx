@@ -14,8 +14,8 @@ export function SiteHeader() {
           <Link href="/#que-revisamos" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:block">
             Qué revisamos
           </Link>
-          <Link href="/#precios" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:block">
-            Precios
+          <Link href="/#gratis" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:block">
+            Es gratis
           </Link>
           <Button asChild size="sm" className="ml-2">
             <Link href="/#inspeccion">Inspeccionar gratis</Link>
