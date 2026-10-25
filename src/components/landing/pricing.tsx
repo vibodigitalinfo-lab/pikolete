@@ -1,8 +1,7 @@
 import Link from "next/link"
-import { Check, Wrench } from "lucide-react"
+import { Check } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { siteConfig } from "@/lib/config"
 import { cn } from "@/lib/utils"
 
 const PLANS = [
@@ -29,14 +28,14 @@ const PLANS = [
 
 export function Pricing() {
   return (
-    <section id="precios" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20">
+    <section id="gratis" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">Gratis. De verdad.</h2>
         <p className="mt-3 text-muted-foreground">
           Sin tarjeta y sin letra pequeña. Para el informe completo solo te pedimos tu email.
         </p>
       </div>
-      <div className="mt-12 grid gap-6 lg:grid-cols-3">
+      <div className="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-2">
         {PLANS.map((plan) => (
           <article
             key={plan.name}
@@ -68,20 +67,6 @@ export function Pricing() {
             </Button>
           </article>
         ))}
-        <article className="flex flex-col rounded-2xl bg-primary p-7 text-primary-foreground shadow-sm">
-          <Wrench className="size-8 text-badge" />
-          <h3 className="mt-4 text-lg font-bold">Lo arreglamos por ti</h3>
-          <p className="mt-3 text-4xl font-extrabold">A medida</p>
-          <p className="mt-4 flex-1 text-sm text-primary-foreground/75">
-            ¿Sin tiempo para tocar código? El equipo de Pikolete corrige todas las infracciones de tu informe y te
-            devuelve la web en regla.
-          </p>
-          <Button asChild size="lg" className="mt-7 bg-badge font-bold text-badge-foreground hover:bg-badge/90">
-            <a href={`mailto:${siteConfig.quoteEmail}?subject=${encodeURIComponent("Presupuesto Pikolete")}`}>
-              Solicitar presupuesto
-            </a>
-          </Button>
-        </article>
       </div>
     </section>
   )

@@ -9,15 +9,15 @@ export const FAQS = [
   },
   {
     q: "¿De verdad es gratis?",
-    a: "Sí. La inspección es gratis y sin registro. Para ver todas las soluciones y descargar el PDF oficial solo te pedimos tu email: no hay tarjeta ni pagos.",
+    a: "Sí. La inspección es gratis y sin registro. Para ver todas las soluciones y descargar el PDF oficial solo te pedimos tu email: no hay tarjeta ni pagos. Pikolete se mantiene gracias a los anuncios.",
   },
   {
     q: "¿Qué hacéis con mis datos?",
-    a: `Los usamos para darte acceso al informe y, si lo pides, prepararte un presupuesto. Solo te enviamos ofertas si marcas la casilla. No los vendemos ni los cedemos, y puedes pedir que los borremos escribiendo a ${siteConfig.quoteEmail}.`,
+    a: `Los usamos para darte acceso al informe y enviártelo por email. Solo te enviamos ofertas si marcas la casilla. No los vendemos ni los cedemos, y puedes pedir que los borremos escribiendo a ${siteConfig.quoteEmail}.`,
   },
   {
     q: "¿Sustituye a una auditoría SEO completa?",
-    a: "Es una inspección express de la página que indicas: detecta los fallos más habituales y con más impacto. Para auditorías profundas de todo el sitio, solicita presupuesto.",
+    a: "Es una inspección express de la página que indicas: detecta los fallos más habituales y con más impacto. Si tienes varias páginas importantes, inspecciona cada una por separado.",
   },
   {
     q: "¿Cómo se calcula la nota?",

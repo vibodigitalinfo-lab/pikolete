@@ -9,32 +9,21 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
+  partialPrefetching: true,
+  poweredByHeader: false,
   async headers() {
     return [
+      { source: "/:path*", headers: securityHeaders },
       {
-        source: "/:path*",
-        headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-        ],
-      },
-      {
-        // El panel (también /admin a secas) no se indexa, no se cachea y no se puede incrustar en otra web (clickjacking).
+        // El panel (también /admin a secas) no se indexa y no se cachea.
         source: "/admin/:path*",
         headers: [
-          { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Robots-Tag", value: "noindex, nofollow" },
           { key: "Cache-Control", value: "no-store" },
         ],
       },
     ];
-  },
-  cacheComponents: true,
-  partialPrefetching: true,
-  poweredByHeader: false,
-  async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
   },
   turbopack: {
     rules: {
