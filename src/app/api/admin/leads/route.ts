@@ -19,10 +19,10 @@ function denied(request: NextRequest) {
  * GET /api/admin/leads?format=json → JSON
  */
 export async function GET(request: NextRequest) {
-  if (!rateLimit(`admin:${clientIp(request.headers)}`, 30, 60_000)) {
+  if (!(await rateLimit(`admin:${clientIp(request.headers)}`, 30, 60_000))) {
     return new NextResponse("Demasiados intentos", { status: 429 })
   }
-  if (!isAdminRequest(request)) return denied(request)
+  if (!(await isAdminRequest(request))) return denied(request)
 
   const leads = await listLeads()
   if (request.nextUrl.searchParams.get("format") === "json") {
@@ -40,7 +40,10 @@ export async function GET(request: NextRequest) {
 
 /** DELETE /api/admin/leads?id=... → borra un lead (derecho de supresión RGPD). */
 export async function DELETE(request: NextRequest) {
-  if (!isAdminRequest(request)) return denied(request)
+  if (!(await rateLimit(`admin:${clientIp(request.headers)}`, 30, 60_000))) {
+    return new NextResponse("Demasiados intentos", { status: 429 })
+  }
+  if (!(await isAdminRequest(request))) return denied(request)
   const id = request.nextUrl.searchParams.get("id") ?? ""
   if (!/^[0-9a-f-]{36}$/.test(id)) return NextResponse.json({ error: "id inválido" }, { status: 400 })
   const deleted = await deleteLead(id)

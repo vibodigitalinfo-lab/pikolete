@@ -6,7 +6,7 @@ import { gateChecks } from "@/lib/audit/gating"
 import type { AuditErrorBody, AuditResult } from "@/lib/audit/types"
 import { hostKey } from "@/lib/config"
 import { isUnlocked, UNLOCK_COOKIE } from "@/lib/premium"
-import { clientIp, rateLimit } from "@/lib/rate-limit"
+import { clientIp, rateLimits } from "@/lib/rate-limit"
 
 export const maxDuration = 30
 
@@ -14,7 +14,12 @@ const error = (message: string, status: number) =>
   NextResponse.json<AuditErrorBody>({ error: message }, { status })
 
 export async function POST(request: NextRequest) {
-  if (!rateLimit(`inspect:${clientIp(request.headers)}`, 12, 60_000)) {
+  // Por IP: 12 por minuto y 60 por hora. Cada inspección hace 3 peticiones a la web auditada.
+  const allowed = await rateLimits(`inspect:${clientIp(request.headers)}`, [
+    [12, 60_000],
+    [60, 3_600_000],
+  ])
+  if (!allowed) {
     return error("Demasiadas inspecciones seguidas. Pikolete necesita un café: espera un minuto.", 429)
   }
 
