@@ -4,12 +4,14 @@ import { cacheLife } from "next/cache"
 import { PRIVACY_VERSION, siteConfig } from "@/lib/config"
 import { CONTENT_UPDATED } from "@/lib/seo"
 import { recentDomains } from "@/lib/trust/recent"
+import { publishedPopularStores } from "@/lib/trust/report"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   "use cache"
   cacheLife("hours")
 
-  const domains = await recentDomains(5_000)
+  const [recent, popular] = await Promise.all([recentDomains(5_000), publishedPopularStores()])
+  const domains = [...new Set([...popular.flatMap((g) => g.domains), ...recent])]
   return [
     {
       url: siteConfig.url,
@@ -22,6 +24,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: CONTENT_UPDATED,
       changeFrequency: "daily",
       priority: 0.9,
+    },
+    {
+      url: `${siteConfig.url}/es-fiable/tiendas`,
+      changeFrequency: "weekly",
+      priority: 0.8,
     },
     ...domains.map((d) => ({
       url: `${siteConfig.url}/es-fiable/${d}`,

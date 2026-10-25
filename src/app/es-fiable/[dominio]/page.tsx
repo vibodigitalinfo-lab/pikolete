@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { notFound, permanentRedirect } from "next/navigation"
+import { notFound, permanentRedirect, redirect } from "next/navigation"
 import { ChevronDown, RefreshCw } from "lucide-react"
 
 import { AdSlot } from "@/components/site/ad-slot"
@@ -9,7 +9,7 @@ import { TrustChecker } from "@/components/trust/trust-checker"
 import { TrustGuide } from "@/components/trust/trust-guide"
 import { siteConfig } from "@/lib/config"
 import { baseOpenGraph, jsonLd } from "@/lib/seo"
-import { isPublishable, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
+import { isPublishableResult, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
 import { getDomainReport } from "@/lib/trust/report"
 import type { TrustResult } from "@/lib/trust/types"
 
@@ -50,15 +50,15 @@ function summary(domain: string, r: TrustResult): string {
   return `Hemos revisado ${domain} y encontramos ${good} señales buenas, ${warn} de atención y ${bad} de alerta.${age}`
 }
 
+// Solo hay página para resultados "fiable" o "precaucion" (ver isPublishableResult), así que no hace falta el caso "riesgo".
+// Evitamos la palabra "estafa" junto al nombre de la tienda: Google la asociaría a la marca.
 function faqs(domain: string, r: TrustResult) {
-  const scam =
+  const trust =
     r.level === "fiable"
-      ? `No vemos señales típicas de estafa en ${domain}: ${LEVELS.fiable.text.toLowerCase()}`
-      : r.level === "riesgo"
-        ? `No podemos afirmar que sea una estafa, pero ${domain} tiene varias señales que suelen tener las webs fraudulentas. Busca opiniones de otros compradores y no pagues por transferencia.`
-        : `No vemos señales graves, pero tampoco todas las que tiene una tienda de confianza. Revisa su aviso legal y busca opiniones antes de comprar.`
+      ? `En ${domain} no vemos las señales que suelen tener las webs fraudulentas: ${LEVELS.fiable.text.toLowerCase()}`
+      : `No vemos señales graves en ${domain}, pero tampoco todas las que tiene una tienda de confianza. Revisa su aviso legal y busca opiniones antes de comprar.`
   const list = [
-    { q: `¿${domain} es una estafa?`, a: scam },
+    { q: `¿Es de fiar ${domain}?`, a: trust },
     {
       q: `¿Es seguro comprar en ${domain}?`,
       a: `Nuestra nota para ${domain} es «${LEVELS[r.level].title}». Sea cual sea la web, paga con tarjeta o PayPal, que te permiten reclamar el dinero si el pedido no llega.`,
@@ -83,20 +83,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const domain = canonicalSlug((await params).dominio)
   if (!isValidDomainSlug(domain)) return {}
   const report = await getDomainReport(domain)
-  if (report.status === "missing") return { robots: { index: false } }
+  if (report.status === "missing" || (report.status === "ok" && !isPublishableResult(domain, report.result))) {
+    return { robots: { index: false } }
+  }
 
   const title = `¿Es fiable ${domain}? Comprobamos si es seguro comprar`
   const description =
     report.status === "ok"
-      ? `${LEVELS[report.result.level].title}: ${summary(domain, report.result)} Antigüedad, aviso legal, CIF, contacto y señales de estafa.`
-      : `Comprueba gratis si ${domain} es fiable: antigüedad del dominio, aviso legal, CIF, contacto y señales de estafa.`
+      ? `${LEVELS[report.result.level].title}: ${summary(domain, report.result)} Antigüedad, aviso legal, CIF, contacto y devoluciones.`
+      : `Comprueba gratis si ${domain} es fiable: antigüedad del dominio, aviso legal, CIF, contacto y devoluciones.`
   return {
     title: { absolute: `${title} · Pikolete` },
     description,
     alternates: { canonical: `/es-fiable/${domain}` },
     openGraph: { ...baseOpenGraph, title, description, url: `/es-fiable/${domain}` },
-    // Una caída temporal no debe llegar al índice, y los dominios de la lista negra nunca.
-    robots: { index: report.status === "ok" && isPublishable(domain), follow: true },
+    // Una caída temporal no debe llegar al índice.
+    robots: { index: report.status === "ok", follow: true },
   }
 }
 
@@ -110,6 +112,9 @@ export default async function DomainTrustPage({ params }: Props) {
   if (report.status === "missing") notFound()
 
   const result = report.status === "ok" ? report.result : null
+  // Blogs, webs que no se dejan leer y resultados con señales de riesgo no tienen página pública:
+  // se muestran en el comprobador, sin guardar nada.
+  if (result && !isPublishableResult(domain, result)) redirect(`/es-fiable?url=${encodeURIComponent(domain)}`)
   const questions = result ? faqs(domain, result) : []
 
   const structuredData = {
