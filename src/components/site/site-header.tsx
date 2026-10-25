@@ -15,6 +15,9 @@ export function SiteHeader() {
             <span className="sm:hidden">¿Es fiable?</span>
             <span className="hidden sm:inline">¿Es fiable una web?</span>
           </Link>
+          <Link href="/guias" className="rounded-md px-3 py-2 text-muted-foreground hover:text-foreground">
+            Guías
+          </Link>
           <Link href="/#que-revisamos" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:block">
             Qué revisamos
           </Link>
