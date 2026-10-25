@@ -19,10 +19,15 @@ export function SiteFooter() {
           <Link href="/es-fiable" className="hover:text-foreground">
             ¿Es fiable esta web?
           </Link>
+          <Link href="/aviso-legal" className="hover:text-foreground">
+            Aviso legal
+          </Link>
           <Link href="/privacidad" className="hover:text-foreground">
             Privacidad
           </Link>
-          <span>© pikolete.com</span>
+          <span>
+            © pikolete.com{siteConfig.legal.taxId && ` · ${siteConfig.legal.owner || "Pikolete"} · NIF ${siteConfig.legal.taxId}`}
+          </span>
         </div>
       </div>
     </footer>

@@ -303,7 +303,8 @@ export function analyzeTrust({
   // 9. Formas de pago
   const safePay = /(paypal|bizum|visa|mastercard|stripe|redsys|apple pay|google pay|contra ?reembolso|mercado ?pago|klarna|amex)/i.test(lower)
   const transferOnly = !safePay && /(transferencia|western union|criptomoneda|bitcoin)/i.test(lower)
-  if (safePay || transferOnly || isShop) {
+  // Solo en tiendas: en otras webs "tarjeta" o "PayPal" suelen salir en otro contexto ("no hay tarjeta ni pagos").
+  if (isShop) {
     add({
       id: "payment",
       label: "Formas de pago con protección",

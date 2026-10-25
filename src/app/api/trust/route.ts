@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import { InspectError } from "@/lib/audit/fetch-page"
 import { clientIp, rateLimits } from "@/lib/rate-limit"
 import { runTrustCheck } from "@/lib/trust/engine"
+import { domainSlug, isPublishable, recordChecked } from "@/lib/trust/recent"
 import type { TrustErrorBody } from "@/lib/trust/types"
 
 export const maxDuration = 30
@@ -31,7 +32,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const result = await runTrustCheck(url)
-    return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } })
+    const slug = domainSlug(url)
+    const publishable = slug !== null && isPublishable(slug)
+    if (publishable) await recordChecked(slug)
+    return NextResponse.json({ ...result, slug: publishable ? slug : null }, { headers: { "Cache-Control": "no-store" } })
   } catch (err) {
     if (err instanceof InspectError) return error(err.message, err.status)
     console.error("[trust] fallo inesperado", err)
