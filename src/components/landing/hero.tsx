@@ -19,7 +19,8 @@ export function Hero() {
             Inspecciona tu sitio web antes de que lo haga tu competencia
           </h1>
           <p className="mt-5 max-w-xl text-lg text-pretty text-muted-foreground">
-            En menos de 15 segundos revisamos tu SEO, velocidad, certificado SSL y estructura.
+            Auditoría web y SEO gratis: en menos de 15 segundos revisamos tu SEO, velocidad, certificado SSL y
+            estructura.
             Te ponemos la multa con un diagnóstico claro… y te decimos cómo librarte de ella.
           </p>
           <InspectForm className="mt-8 max-w-2xl" />
