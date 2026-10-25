@@ -2,10 +2,19 @@ import type { Metadata } from "next"
 import type { ReactNode } from "react"
 
 import { PRIVACY_VERSION, siteConfig } from "@/lib/config"
+import { baseOpenGraph } from "@/lib/seo"
 
 export const metadata: Metadata = {
   title: "Política de privacidad",
-  description: "Cómo trata Pikolete Inspector los datos personales de sus usuarios.",
+  description:
+    "Cómo trata Pikolete Inspector los datos personales: qué recogemos al auditar tu web, para qué, cuánto tiempo y cómo ejercer tus derechos RGPD.",
+  alternates: { canonical: "/privacidad" },
+  openGraph: {
+    ...baseOpenGraph,
+    title: "Política de privacidad · Pikolete Inspector",
+    description: "Cómo trata Pikolete Inspector los datos personales de sus usuarios.",
+    url: "/privacidad",
+  },
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
