@@ -16,6 +16,9 @@ export function SiteFooter() {
           <a href={`mailto:${siteConfig.quoteEmail}`} className="hover:text-foreground">
             {siteConfig.quoteEmail}
           </a>
+          <Link href="/es-fiable" className="hover:text-foreground">
+            ¿Es fiable esta web?
+          </Link>
           <Link href="/privacidad" className="hover:text-foreground">
             Privacidad
           </Link>
