@@ -148,7 +148,7 @@ export const LeadGate = forwardRef<HTMLDivElement, LeadGateProps>(function LeadG
             <span>Quiero recibir consejos de SEO y ofertas de Pikolete por email (opcional).</span>
           </label>
           <HoneypotField />
-          <Turnstile key={attempt} />
+          <Turnstile key={attempt} action="report" />
           {error && (
             <p role="alert" className="text-sm font-medium text-danger">
               {error}

@@ -37,7 +37,7 @@ function loadScript(): Promise<void> {
  * Va dentro del <form>: el widget añade un campo oculto "cf-turnstile-response" con el token.
  * Los tokens son de un solo uso: tras un envío fallido, cambia su `key` para pedir otro.
  */
-export function Turnstile() {
+export function Turnstile({ action }: { action: "report" | "quote" }) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -47,14 +47,19 @@ export function Turnstile() {
     loadScript()
       .then(() => {
         if (cancelled || !containerRef.current || !window.turnstile) return
-        widgetId = window.turnstile.render(containerRef.current, { sitekey: SITE_KEY, language: "es", size: "flexible" })
+        widgetId = window.turnstile.render(containerRef.current, {
+          sitekey: SITE_KEY,
+          action,
+          language: "es",
+          size: "flexible",
+        })
       })
       .catch((err) => console.error(err))
     return () => {
       cancelled = true
       if (widgetId) window.turnstile?.remove(widgetId)
     }
-  }, [])
+  }, [action])
 
   return SITE_KEY ? <div ref={containerRef} className="min-h-[65px]" /> : null
 }

@@ -53,7 +53,13 @@ export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
   // A un bot no le decimos que le hemos pillado: respuesta normal, pero no se guarda ni se envía nada.
   if (isHoneypotFilled(body)) return NextResponse.json({ ok: true })
-  if (!(await verifyTurnstile(body?.turnstileToken, ip))) {
+  const type = body?.type === "quote" ? "quote" : "report"
+  const human = await verifyTurnstile(body?.turnstileToken, {
+    ip,
+    action: type,
+    requestHost: request.headers.get("x-forwarded-host") ?? request.headers.get("host"),
+  })
+  if (!human) {
     return NextResponse.json(
       { error: "No hemos podido comprobar que no eres un robot. Recarga la página e inténtalo de nuevo." },
       { status: 400 }
@@ -80,7 +86,7 @@ export async function POST(request: NextRequest) {
 
   const lead: Lead = {
     id: newLeadId(),
-    type: body?.type === "quote" ? "quote" : "report",
+    type,
     createdAt: new Date().toISOString(),
     email,
     name: clip(body?.name, 120),
