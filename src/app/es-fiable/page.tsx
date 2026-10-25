@@ -188,6 +188,17 @@ export default function EsFiablePage() {
       </section>
 
       <section className="mx-auto w-full max-w-3xl px-4 pb-24 text-center">
+        <p className="mb-3 text-muted-foreground">
+          ¿Se acerca el Black Friday?{" "}
+          <Link href="/guias/estafas-black-friday" className="font-semibold text-primary underline underline-offset-4">
+            Lee cómo comprar sin caer en estafas
+          </Link>{" "}
+          y el resto de{" "}
+          <Link href="/guias" className="font-semibold text-primary underline underline-offset-4">
+            guías
+          </Link>
+          .
+        </p>
         <p className="text-muted-foreground">
           ¿Tienes una web y quieres saber qué falla?{" "}
           <Link href="/" className="font-semibold text-primary underline underline-offset-4">

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 import { cacheLife } from "next/cache"
 
+import { GUIDES } from "@/content/guides"
 import { PRIVACY_VERSION, siteConfig } from "@/lib/config"
 import { CONTENT_UPDATED } from "@/lib/seo"
 import { recentDomains } from "@/lib/trust/recent"
@@ -34,6 +35,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteConfig.url}/es-fiable/${d}`,
       changeFrequency: "weekly" as const,
       priority: 0.6,
+    })),
+    {
+      url: `${siteConfig.url}/guias`,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    ...GUIDES.map((g) => ({
+      url: `${siteConfig.url}/guias/${g.slug}`,
+      lastModified: g.updated,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     })),
     {
       url: `${siteConfig.url}/aviso-legal`,

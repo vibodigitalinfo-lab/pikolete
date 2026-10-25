@@ -22,6 +22,9 @@ export function SiteFooter() {
           <Link href="/es-fiable/tiendas" className="hover:text-foreground">
             Tiendas populares
           </Link>
+          <Link href="/guias" className="hover:text-foreground">
+            Guías
+          </Link>
           <Link href="/aviso-legal" className="hover:text-foreground">
             Aviso legal
           </Link>
