@@ -97,7 +97,8 @@ export function levelFor(score: number): TrustLevel {
   return "riesgo"
 }
 
-export async function runTrustCheck(input: string): Promise<TrustResult> {
+/** knownShop: sabemos que es una tienda (lista de populares) aunque su portada no lo diga claramente. */
+export async function runTrustCheck(input: string, { knownShop = false }: { knownShop?: boolean } = {}): Promise<TrustResult> {
   const startDomain = registrableDomain(normalizeUrl(input).hostname)
   const [{ page, sslError }, startAge] = await Promise.all([loadPage(input), domainAgeDays(startDomain)])
 
@@ -105,7 +106,7 @@ export async function runTrustCheck(input: string): Promise<TrustResult> {
   const finalDomain = registrableDomain(finalHost)
   const ageDays = finalDomain === startDomain ? startAge : await domainAgeDays(finalDomain)
 
-  return analyzeTrust({ input, finalUrl: page.finalUrl, status: page.status, html: page.html, sslError, ageDays })
+  return analyzeTrust({ input, finalUrl: page.finalUrl, status: page.status, html: page.html, sslError, ageDays, knownShop })
 }
 
 /** Parte sin red del análisis: recibe la página ya descargada y la edad del dominio. */
@@ -116,6 +117,7 @@ export function analyzeTrust({
   html,
   sslError,
   ageDays,
+  knownShop = false,
 }: {
   input: string
   finalUrl: URL
@@ -123,6 +125,7 @@ export function analyzeTrust({
   html: string
   sslError: boolean
   ageDays: number | null
+  knownShop?: boolean
 }): TrustResult {
   const startDomain = registrableDomain(normalizeUrl(input).hostname)
   const finalHost = finalUrl.hostname.toLowerCase()
@@ -130,6 +133,8 @@ export function analyzeTrust({
 
   const $ = cheerio.load(html)
   const pageTitle = $("title").first().text()
+  // Antes de quitar los scripts: los datos estructurados de producto delatan una tienda.
+  const productData = /"@type"\s*:\s*"(Product|Offer|AggregateOffer|OnlineStore)"/.test(html)
   $("script, style, noscript, template").remove()
   const text = $("body").text().replace(/\s+/g, " ")
   const lower = text.toLowerCase()
@@ -147,8 +152,11 @@ export function analyzeTrust({
     !/just a moment|attention required|access denied|acceso denegado|captcha|are you a robot|verificando/i.test(pageTitle)
 
   const isShop =
-    /(carrito|cesta|añadir al carrito|agregar al carrito|comprar ahora|checkout|finalizar compra|envío gratis|envio gratis)/i.test(lower) ||
-    $('[class*="cart" i], [id*="cart" i], [class*="product" i]').length > 2
+    knownShop ||
+    productData ||
+    /(carrito|cesta|añadir al carrito|agregar al carrito|añadir a la bolsa|comprar ahora|checkout|finalizar compra|envío gratis|envio gratis|mis pedidos)/i.test(lower) ||
+    $('[class*="cart" i], [id*="cart" i], [class*="basket" i], [class*="product" i]').length > 2 ||
+    (hasLink(/devoluci|returns/) && hasLink(/mi cuenta|carrito|cesta|bolsa|cart|basket|pedidos/))
 
   const signals: TrustSignal[] = []
   const add = (s: TrustSignal) => signals.push(s)
