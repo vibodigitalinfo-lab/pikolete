@@ -22,6 +22,8 @@ export interface TrustResult {
   signals: TrustSignal[]
   domainAgeDays: number | null
   checkedAt: string
+  /** Dominio de su página pública (/es-fiable/<slug>), si se puede publicar. Solo lo rellena la API. */
+  slug?: string | null
 }
 
 export interface TrustErrorBody {
