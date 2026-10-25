@@ -7,6 +7,7 @@ import { hostKey, siteConfig } from "@/lib/config"
 import type { Lead } from "@/lib/leads"
 import { sendMail, type MailResult } from "@/lib/mailer"
 import { buildReportPdf, reportPdfFilename } from "@/lib/pdf"
+import { rateLimit } from "@/lib/rate-limit"
 
 const esc = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
@@ -29,21 +30,21 @@ ${internal ? "Aviso interno del panel de Pikolete." : "Recibes este email porque
 </table></td></tr></table></body></html>`
 }
 
-/** Evita reenviar el mismo informe al mismo email una y otra vez (por instancia, 24 h). */
-const recentlySent = new Map<string, number>()
-
-function alreadySent(key: string): boolean {
-  const now = Date.now()
-  for (const [k, t] of recentlySent) if (now - t > 864e5) recentlySent.delete(k)
-  if (recentlySent.has(key)) return true
-  recentlySent.set(key, now)
-  return false
+/**
+ * Evita usar el formulario para bombardear un buzón ajeno: el mismo informe una vez al día
+ * y como mucho 3 informes al día por destinatario.
+ */
+async function recipientBlocked(email: string, host: string): Promise<string | null> {
+  if (!(await rateLimit(`mail:report:${email}|${host}`, 1, 86_400_000))) return "ya enviado"
+  if (!(await rateLimit(`mail:to:${email}`, 3, 86_400_000))) return "demasiados informes a este email hoy"
+  return null
 }
 
 /** Vuelve a auditar la web en el servidor (no confiamos en datos del cliente) y envía el informe completo en PDF. */
 export async function sendReportEmail(lead: Lead): Promise<MailResult> {
   if (!lead.auditedUrl) return { sent: false, reason: "sin URL auditada" }
-  if (alreadySent(`${lead.email}|${hostKey(lead.auditedUrl)}`)) return { sent: false, reason: "ya enviado" }
+  const blocked = await recipientBlocked(lead.email, hostKey(lead.auditedUrl))
+  if (blocked) return { sent: false, reason: blocked }
 
   const audit = await runAudit(lead.auditedUrl)
   const result: AuditResult = { ...audit, unlocked: true, checks: gateChecks(audit.checks, true) }

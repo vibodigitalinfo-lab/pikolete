@@ -1,5 +1,7 @@
 import "server-only"
 
+import { hit } from "@/lib/rate-limit"
+
 export interface MailAttachment {
   /** Contenido en base64. */
   content: string
@@ -84,8 +86,29 @@ async function sendWithCloudflare(message: MailMessage): Promise<MailResult> {
   return { sent: true }
 }
 
+const positiveInt = (value: string | undefined, fallback: number) => {
+  const n = Number(value)
+  return Number.isInteger(n) && n > 0 ? n : fallback
+}
+
+/**
+ * Tope global de envíos para no agotar el plan gratuito de Resend (100/día y 3.000/mes)
+ * aunque alguien abuse de los formularios. Se cuenta cada intento de envío.
+ */
+async function withinQuota(): Promise<boolean> {
+  const now = new Date().toISOString()
+  const [day, month] = await Promise.all([
+    hit(`mail:day:${now.slice(0, 10)}`, 2 * 86_400_000),
+    hit(`mail:month:${now.slice(0, 7)}`, 32 * 86_400_000),
+  ])
+  return (
+    day <= positiveInt(process.env.EMAIL_DAILY_LIMIT, 90) && month <= positiveInt(process.env.EMAIL_MONTHLY_LIMIT, 2_900)
+  )
+}
+
 /** Envía un email con el proveedor configurado. Sin ninguno, no envía nada y lo indica en el resultado. */
 export async function sendMail(message: MailMessage): Promise<MailResult> {
+  if (provider() && !(await withinQuota())) return { sent: false, reason: "tope diario o mensual de emails alcanzado" }
   switch (provider()) {
     case "resend":
       return sendWithResend(message)

@@ -1,10 +1,12 @@
 import { after, NextResponse, type NextRequest } from "next/server"
 
+import { isHoneypotFilled, verifyTurnstile } from "@/lib/anti-spam"
+import { normalizeUrl } from "@/lib/audit/fetch-page"
 import { hostKey, PRIVACY_VERSION } from "@/lib/config"
 import { newLeadId, saveLead, type Lead, type LeadProfile, type LeadSource } from "@/lib/leads"
 import { notifyQuoteRequest, sendReportEmail } from "@/lib/notifications"
 import { addUnlock, UNLOCK_COOKIE, unlockCookieOptions } from "@/lib/premium"
-import { clientIp, rateLimit } from "@/lib/rate-limit"
+import { clientIp, rateLimits } from "@/lib/rate-limit"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const PROFILES: LeadProfile[] = ["owner", "agency", "looking"]
@@ -22,16 +24,41 @@ function decodeHeader(value: string | null): string | undefined {
   }
 }
 
+/** Solo guardamos URLs http(s) válidas: el panel las muestra como enlace. */
+function auditedUrl(value: unknown): string | undefined {
+  const raw = clip(value, 2048)
+  if (!raw) return undefined
+  try {
+    return normalizeUrl(raw).toString()
+  } catch {
+    return undefined
+  }
+}
+
 /**
  * Guarda un lead. Si es de tipo "report", además desbloquea el informe completo del dominio
  * auditado: el "pago" del servicio gratuito son los datos de contacto.
  */
 export async function POST(request: NextRequest) {
-  if (!rateLimit(`leads:${clientIp(request.headers)}`, 8, 60_000)) {
+  const ip = clientIp(request.headers)
+  // Por IP: 5 cada 10 minutos y 20 al día. Cada lead puede disparar un email.
+  const allowed = await rateLimits(`leads:${ip}`, [
+    [5, 600_000],
+    [20, 86_400_000],
+  ])
+  if (!allowed) {
     return NextResponse.json({ error: "Demasiadas solicitudes. Espera un momento." }, { status: 429 })
   }
 
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
+  // A un bot no le decimos que le hemos pillado: respuesta normal, pero no se guarda ni se envía nada.
+  if (isHoneypotFilled(body)) return NextResponse.json({ ok: true })
+  if (!(await verifyTurnstile(body?.turnstileToken, ip))) {
+    return NextResponse.json(
+      { error: "No hemos podido comprobar que no eres un robot. Recarga la página e inténtalo de nuevo." },
+      { status: 400 }
+    )
+  }
   const email = clip(body?.email, 254)?.toLowerCase()
   if (!email || !EMAIL_RE.test(email)) {
     return NextResponse.json({ error: "Introduce un email válido." }, { status: 400 })
@@ -61,7 +88,7 @@ export async function POST(request: NextRequest) {
     phone: clip(body?.phone, 40),
     profile,
     message: clip(body?.message, 2000),
-    auditedUrl: clip(body?.auditedUrl, 2048),
+    auditedUrl: auditedUrl(body?.auditedUrl),
     score: int(body?.score),
     grade: clip(body?.grade, 1),
     fails: int(body?.fails),

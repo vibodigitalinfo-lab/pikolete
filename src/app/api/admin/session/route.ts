@@ -1,12 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-import { ADMIN_COOKIE, adminCookieOptions, checkPassword, createSession } from "@/lib/admin-auth"
-import { clientIp, rateLimit } from "@/lib/rate-limit"
+import { ADMIN_COOKIE, adminCookieOptions, checkPassword, createSession, passwordAttemptAllowed } from "@/lib/admin-auth"
 
 /** Inicia sesión en el panel. */
 export async function POST(request: NextRequest) {
-  if (!rateLimit(`admin-login:${clientIp(request.headers)}`, 5, 60_000)) {
-    return NextResponse.json({ error: "Demasiados intentos. Espera un minuto." }, { status: 429 })
+  if (!(await passwordAttemptAllowed(request))) {
+    return NextResponse.json({ error: "Demasiados intentos. Espera un rato antes de volver a probar." }, { status: 429 })
   }
   const { password } = (await request.json().catch(() => ({}))) as { password?: unknown }
   if (typeof password !== "string" || !checkPassword(password)) {

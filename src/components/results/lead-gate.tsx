@@ -5,6 +5,7 @@ import Link from "next/link"
 import { FileText, Gift, Loader2, Lock, Sparkles } from "lucide-react"
 
 import { readVisitSource } from "@/components/site/source-tracker"
+import { HoneypotField, Turnstile, turnstileToken } from "@/components/site/turnstile"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -31,6 +32,7 @@ export const LeadGate = forwardRef<HTMLDivElement, LeadGateProps>(function LeadG
   const [profile, setProfile] = useState<(typeof PROFILES)[number]["value"]>("owner")
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [attempt, setAttempt] = useState(0)
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -55,6 +57,8 @@ export const LeadGate = forwardRef<HTMLDivElement, LeadGateProps>(function LeadG
         fails,
         warns: result.checks.filter((c) => c.status === "warn").length,
         source: readVisitSource(),
+        website: form.get("website"),
+        turnstileToken: turnstileToken(form),
       }),
     }).catch(() => null)
 
@@ -62,6 +66,7 @@ export const LeadGate = forwardRef<HTMLDivElement, LeadGateProps>(function LeadG
       const body = (await res?.json().catch(() => null)) as { error?: string } | null
       setError(body?.error ?? "No pudimos enviar tus datos. Inténtalo de nuevo.")
       setPending(false)
+      setAttempt((n) => n + 1)
       return
     }
     onUnlocked()
@@ -142,6 +147,8 @@ export const LeadGate = forwardRef<HTMLDivElement, LeadGateProps>(function LeadG
             <input type="checkbox" name="marketing" className="mt-0.5 size-4 accent-[var(--primary)]" />
             <span>Quiero recibir consejos de SEO y ofertas de Pikolete por email (opcional).</span>
           </label>
+          <HoneypotField />
+          <Turnstile key={attempt} />
           {error && (
             <p role="alert" className="text-sm font-medium text-danger">
               {error}

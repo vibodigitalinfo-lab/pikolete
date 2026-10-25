@@ -52,7 +52,21 @@ avisa a `NOTIFY_EMAIL`. Se usa Resend si existe `RESEND_API_KEY` (plan gratuito:
 como alternativa, Cloudflare Email Sending con `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_EMAIL_TOKEN`.
 Sin ninguno no se envía nada y la web sigue funcionando. Código en `src/lib/mailer.ts` y `src/lib/notifications.ts`.
 
+## Seguridad y antiabuso (todo gratis)
+
+- **Panel `/admin`**: `ADMIN_PASSWORD` de al menos 12 caracteres (si no, el panel se desactiva). Login y HTTP Basic
+  comparten límite: 5 intentos por minuto y 20 por hora por IP. Sesión en cookie firmada `httpOnly` + `SameSite=Strict`;
+  el panel no se indexa ni se puede incrustar en otra web.
+- **Límites por IP** (`src/lib/rate-limit.ts`): inspección 12/min y 60/h; formularios 5 cada 10 min y 20/día.
+  Con Upstash Redis (`UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`, o las `KV_REST_API_*` del Marketplace de Vercel)
+  son globales; sin él, solo por instancia. En Redis solo se guarda un hash de la clave, nunca la IP en claro, y caduca sola.
+- **Emails**: tope global de 90/día y 2.900/mes (`EMAIL_DAILY_LIMIT`, `EMAIL_MONTHLY_LIMIT`), el mismo informe
+  una vez al día por destinatario y máximo 3 informes al día por email.
+- **Formularios**: campo trampa invisible y, si se configuran `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY`,
+  Cloudflare Turnstile. La URL auditada de un lead debe ser http(s); el CSV neutraliza fórmulas de Excel.
+- **SSRF**: el inspector solo visita IPs públicas. La comprobación se hace también al conectar (DNS rebinding),
+  en cada redirección y para robots.txt/sitemap.xml (`src/lib/audit/fetch-page.ts`).
+
 ## Limitaciones conocidas (MVP)
 
-- El rate limit es en memoria (por instancia).
-- El rate limit y el antirreenvío de emails son en memoria (por instancia).
+- Sin Upstash, el rate limit y los topes de email son en memoria (por instancia).

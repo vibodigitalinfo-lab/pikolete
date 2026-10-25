@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { readVisitSource } from "@/components/site/source-tracker"
+import { HoneypotField, Turnstile, turnstileToken } from "@/components/site/turnstile"
 import Link from "next/link"
 import type { AuditResult } from "@/lib/audit/types"
 import { siteConfig } from "@/lib/config"
@@ -24,6 +25,7 @@ export function QuoteCta({ result }: { result: AuditResult }) {
   const issues = result.checks.filter((c) => c.status !== "pass").length
   const [state, setState] = useState<"idle" | "sending" | "done">("idle")
   const [error, setError] = useState<string | null>(null)
+  const [attempt, setAttempt] = useState(0)
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -47,12 +49,15 @@ export function QuoteCta({ result }: { result: AuditResult }) {
         score: result.score,
         grade: result.grade,
         source: readVisitSource(),
+        website: form.get("website"),
+        turnstileToken: turnstileToken(form),
       }),
     }).catch(() => null)
     if (!res?.ok) {
       const body = (await res?.json().catch(() => null)) as { error?: string } | null
       setError(body?.error ?? "No pudimos enviar la solicitud.")
       setState("idle")
+      setAttempt((n) => n + 1)
       return
     }
     setState("done")
@@ -124,6 +129,8 @@ export function QuoteCta({ result }: { result: AuditResult }) {
                 <input type="checkbox" name="marketing" className="mt-0.5 size-4 accent-[var(--primary)]" />
                 <span>Quiero recibir consejos de SEO y ofertas de Pikolete por email (opcional).</span>
               </label>
+              <HoneypotField />
+              <Turnstile key={attempt} />
               {error && (
                 <p role="alert" className="text-sm font-medium text-danger">
                   {error}
