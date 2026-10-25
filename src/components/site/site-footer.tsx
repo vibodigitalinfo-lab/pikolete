@@ -25,6 +25,12 @@ export function SiteFooter() {
           <Link href="/guias" className="hover:text-foreground">
             Guías
           </Link>
+          <Link href="/metodologia" className="hover:text-foreground">
+            Cómo revisamos
+          </Link>
+          <Link href="/sobre-pikolete" className="hover:text-foreground">
+            Sobre Pikolete
+          </Link>
           <Link href="/aviso-legal" className="hover:text-foreground">
             Aviso legal
           </Link>

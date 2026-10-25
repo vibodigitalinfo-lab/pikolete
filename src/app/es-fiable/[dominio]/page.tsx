@@ -9,7 +9,7 @@ import { TrustChecker } from "@/components/trust/trust-checker"
 import { TrustGuide } from "@/components/trust/trust-guide"
 import { siteConfig } from "@/lib/config"
 import { baseOpenGraph, jsonLd } from "@/lib/seo"
-import { isPublishableResult, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
+import { isIndexable, isPublishableResult, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
 import { getDomainReport } from "@/lib/trust/report"
 import type { TrustResult } from "@/lib/trust/types"
 
@@ -97,8 +97,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: { canonical: `/es-fiable/${domain}` },
     openGraph: { ...baseOpenGraph, title, description, url: `/es-fiable/${domain}` },
-    // Una caída temporal no debe llegar al índice.
-    robots: { index: report.status === "ok", follow: true },
+    // Una caída temporal no debe llegar al índice, ni una ficha que solo ha pedido una persona (ver isIndexable).
+    robots: { index: report.status === "ok" && (await isIndexable(domain)), follow: true },
   }
 }
 
