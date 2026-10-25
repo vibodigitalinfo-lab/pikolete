@@ -104,7 +104,13 @@ export async function runAudit(input: string): Promise<Omit<AuditResult, "unlock
 
   const blockingScripts = $("head script[src]").filter((_, el) => {
     const s = $(el)
-    return s.attr("async") === undefined && s.attr("defer") === undefined && s.attr("type") !== "module"
+    // nomodule: los navegadores modernos ni lo descargan ni lo ejecutan, así que no bloquea.
+    return (
+      s.attr("async") === undefined &&
+      s.attr("defer") === undefined &&
+      s.attr("nomodule") === undefined &&
+      s.attr("type") !== "module"
+    )
   }).length
 
   const bodyText = $("body").clone().find("script, style, noscript, svg").remove().end().text()

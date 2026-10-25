@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react"
 
 import { siteConfig } from "@/lib/config"
 
-const FAQS = [
+export const FAQS = [
   {
     q: "¿Necesito instalar algo o dar acceso a mi web?",
     a: "No. Pikolete solo visita tu página pública, igual que haría Google o cualquier visitante. No tocamos nada.",
