@@ -1,9 +1,39 @@
-# Pikolete Inspector · Auditor Web & SEO Express
+# Pikolete
 
-Micro-SaaS de [pikolete.com](https://pikolete.com): pegas una URL y el "agente Pikolete" la inspecciona
-(SEO, velocidad, seguridad SSL y estructura), le pone una nota de 0 a 100 y emite una "multa" con el
-diagnóstico de cada fallo. Todo es gratis: las 3 soluciones más urgentes se ven sin registro y el resto,
-junto con el PDF oficial, se desbloquean dejando el email (con consentimiento RGPD).
+**Herramientas web gratuitas en español: [pikolete.com](https://pikolete.com)**
+
+Pikolete es un agente con gorra de policía que revisa webs por ti. Pegas una dirección y en unos segundos
+te dice qué está mal y cómo arreglarlo, sin registro y sin pagar nada.
+
+## Qué hace
+
+### 🔎 Auditor web y SEO express
+
+Inspecciona cualquier página pública y le pone una nota de 0 a 100: SEO (títulos, descripciones, encabezados,
+datos estructurados, robots.txt, sitemap), velocidad, seguridad (HTTPS, certificado, cabeceras) y estructura.
+Cada fallo llega como una «multa» con su diagnóstico y la solución paso a paso. Las tres soluciones más urgentes
+se ven al momento; el informe completo en PDF se envía por email.
+
+### 🛒 ¿Es fiable esta web?
+
+Comprobador de tiendas online pensado para quien va a comprar: antigüedad del dominio, aviso legal, CIF,
+datos de contacto, política de devoluciones, formas de pago y otras señales que suelen faltar en las webs
+fraudulentas. Pikolete habla siempre de **señales**, nunca acusa a una tienda: es una revisión automática que
+ayuda a decidir, no un veredicto. La metodología y el peso de cada señal están en
+[pikolete.com/metodologia](https://pikolete.com/metodologia).
+
+### 📚 Guías para compradores
+
+Consejos prácticos en [pikolete.com/guias](https://pikolete.com/guias): cómo detectar estafas en Black Friday,
+qué hacer si te han engañado comprando online, SMS falsos, formas de pago seguras y más.
+
+## Privacidad
+
+- No se guarda la IP de nadie: los límites antiabuso usan un hash que caduca solo.
+- El email solo se pide para enviar el informe completo, con consentimiento expreso (RGPD).
+- Las fichas públicas de tiendas solo guardan el nombre del dominio, nada de quien lo comprobó.
+
+Más en [pikolete.com/privacidad](https://pikolete.com/privacidad).
 
 ## Stack
 
@@ -35,6 +65,9 @@ Sin `BLOB_READ_WRITE_TOKEN`, los leads se guardan en `data/leads.json` (ignorado
 | `src/lib/audit/engine.ts` | Los 26 controles y el score ponderado |
 | `src/lib/audit/fetch-page.ts` | Descarga segura (anti-SSRF, redirecciones manuales, límites) |
 | `src/lib/pdf.ts` | Generación del informe PDF en el navegador |
+| `src/app/es-fiable/` | Comprobador «¿Es fiable esta web?», fichas por dominio y directorio de tiendas |
+| `src/lib/trust/` | Señales de confianza de una tienda (antigüedad del dominio, aviso legal, CIF, contacto, devoluciones...) |
+| `src/content/guides.ts` | Guías para compradores (`/guias`) |
 
 ## Ver los leads
 
@@ -64,9 +97,12 @@ Sin ninguno no se envía nada y la web sigue funcionando. Código en `src/lib/ma
   una vez al día por destinatario y máximo 3 informes al día por email.
 - **Formularios**: campo trampa invisible y, si se configuran `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY`,
   Cloudflare Turnstile. La URL auditada de un lead debe ser http(s); el CSV neutraliza fórmulas de Excel.
+- **Fichas `/es-fiable/<dominio>`**: solo se generan para tiendas del directorio o dominios que ya pasaron por el
+  comprobador (que tiene límite por IP); el resto redirige al comprobador.
 - **SSRF**: el inspector solo visita IPs públicas. La comprobación se hace también al conectar (DNS rebinding),
   en cada redirección y para robots.txt/sitemap.xml (`src/lib/audit/fetch-page.ts`).
 
-## Limitaciones conocidas (MVP)
+## Contribuir
 
-- Sin Upstash, el rate limit y los topes de email son en memoria (por instancia).
+¿Has encontrado un fallo o tienes una idea? Abre un *issue*. Si encuentras un problema de seguridad,
+escribe a **hola@pikolete.com** en lugar de publicarlo.
