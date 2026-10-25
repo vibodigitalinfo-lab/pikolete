@@ -147,7 +147,9 @@ const CSV_COLUMNS: Array<keyof Lead | `source.${keyof LeadSource}`> = [
 export function leadsToCsv(leads: Lead[]): string {
   const cell = (value: unknown) => {
     if (value === undefined || value === null) return ""
-    const text = String(value)
+    // Un texto que empieza por = + - @ Excel lo ejecuta como fórmula (inyección CSV): lo neutralizamos.
+    const raw = String(value)
+    const text = /^[=+\-@\t\r]/.test(raw) && typeof value === "string" ? `'${raw}` : raw
     return /[;"\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
   }
   const rows = leads.map((lead) =>
