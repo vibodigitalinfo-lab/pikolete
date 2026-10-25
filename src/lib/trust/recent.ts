@@ -105,6 +105,25 @@ export async function recordChecked(domain: string): Promise<void> {
   ]);
 }
 
+/**
+ * Si un dominio puede tener ficha: está en el directorio o ya pasó por el comprobador (que tiene límite por IP).
+ * Así nadie puede usar /es-fiable/<dominio> para que el servidor visite miles de webs inventadas.
+ * Sin Redis (desarrollo, o si Upstash no responde) no se bloquea nada.
+ */
+export async function isKnownDomain(domain: string): Promise<boolean> {
+  "use cache";
+  if (POPULAR_DOMAINS.includes(domain) || !redisConfig()) {
+    cacheLife("hours");
+    return true;
+  }
+  const out = await redis([["ZSCORE", KEY, domain]]);
+  const known = !out || (out[0]?.result !== null && out[0]?.result !== undefined);
+  // Un «no» dura poco: el dominio puede pasar por el comprobador justo después.
+  if (known) cacheLife("hours");
+  else cacheLife("minutes");
+  return known;
+}
+
 /** Últimos dominios comprobados, del más reciente al más antiguo. */
 export async function recentDomains(limit: number): Promise<string[]> {
   const out = await redis([["ZREVRANGE", KEY, 0, limit - 1]]);

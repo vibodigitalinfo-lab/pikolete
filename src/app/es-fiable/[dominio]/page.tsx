@@ -9,7 +9,7 @@ import { TrustChecker } from "@/components/trust/trust-checker"
 import { TrustGuide } from "@/components/trust/trust-guide"
 import { siteConfig } from "@/lib/config"
 import { baseOpenGraph, jsonLd } from "@/lib/seo"
-import { isIndexable, isPublishableResult, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
+import { isIndexable, isKnownDomain, isPublishableResult, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
 import { getDomainReport } from "@/lib/trust/report"
 import type { TrustResult } from "@/lib/trust/types"
 
@@ -28,7 +28,13 @@ export async function generateStaticParams() {
 }
 
 function canonicalSlug(raw: string): string {
-  return decodeURIComponent(raw).trim().toLowerCase().replace(/^www\./, "").replace(/\.$/, "")
+  let value = raw
+  try {
+    value = decodeURIComponent(raw)
+  } catch {
+    // Un % mal formado no es un dominio: isValidDomainSlug lo rechaza después.
+  }
+  return value.trim().toLowerCase().replace(/^www\./, "").replace(/\.$/, "")
 }
 
 const formatDate = (iso: string) =>
@@ -82,6 +88,7 @@ function faqs(domain: string, r: TrustResult) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const domain = canonicalSlug((await params).dominio)
   if (!isValidDomainSlug(domain)) return {}
+  if (!(await isKnownDomain(domain))) return { robots: { index: false } }
   const report = await getDomainReport(domain)
   if (report.status === "missing" || (report.status === "ok" && !isPublishableResult(domain, report.result))) {
     return { robots: { index: false } }
@@ -107,6 +114,8 @@ export default async function DomainTrustPage({ params }: Props) {
   const domain = canonicalSlug(raw)
   if (!isValidDomainSlug(domain)) notFound()
   if (domain !== raw) permanentRedirect(`/es-fiable/${domain}`)
+  // Un dominio que nadie ha comprobado se manda al comprobador, que tiene límite por IP.
+  if (!(await isKnownDomain(domain))) redirect(`/es-fiable?url=${encodeURIComponent(domain)}`)
 
   const report = await getDomainReport(domain)
   if (report.status === "missing") notFound()
