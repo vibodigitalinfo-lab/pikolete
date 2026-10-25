@@ -77,7 +77,7 @@ export const LeadGate = forwardRef<HTMLDivElement, LeadGateProps>(function LeadG
       <div className="grid gap-8 p-6 sm:p-8 md:grid-cols-[0.9fr_1.1fr]">
         <div>
           <p className="flex items-center gap-2 text-sm font-bold tracking-wider text-badge uppercase">
-            <Lock className="size-4" /> {lockedCount} soluciones bloqueadas
+            <Lock className="size-4" /> {lockedCount > 0 ? `${lockedCount} soluciones bloqueadas` : "Informe oficial"}
           </p>
           <h2 className="mt-2 text-2xl font-extrabold text-balance">
             Desbloquea gratis el informe completo y el PDF oficial

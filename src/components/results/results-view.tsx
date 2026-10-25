@@ -212,7 +212,8 @@ export function ResultsView({ url }: { url: string }) {
             })}
           </Tabs>
 
-          {!result.unlocked && lockedCount > 0 && (
+          {/* Siempre que no esté desbloqueado: aunque no haya soluciones ocultas, el email da el PDF oficial. */}
+          {!result.unlocked && (
             <LeadGate
               ref={gateRef}
               result={result}
@@ -241,7 +242,9 @@ export function ResultsView({ url }: { url: string }) {
             <div className="rounded-2xl border-2 border-badge bg-badge/10 p-6">
               <h2 className="font-bold">Informe completo gratis</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Desbloquea las {lockedCount} soluciones restantes y el PDF oficial solo con tu email.
+                {lockedCount > 0
+                  ? `Desbloquea las ${lockedCount} soluciones restantes y el PDF oficial solo con tu email.`
+                  : "Recibe el PDF oficial de la inspección en tu email."}
               </p>
               <Button className="mt-4 w-full" onClick={scrollToGate}>
                 <Lock /> Desbloquear gratis
