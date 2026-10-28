@@ -47,7 +47,17 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
   },
   {
     category: "Deporte",
-    domains: ["decathlon.es", "sprinter.es", "jdsports.es", "nike.com", "adidas.es", "forumsport.com", "futbolemotion.com", "padelnuestro.com", "trekkinn.com"],
+    domains: [
+      "decathlon.es",
+      "sprinter.es",
+      "jdsports.es",
+      "nike.com",
+      "adidas.es",
+      "forumsport.com",
+      "futbolemotion.com",
+      "padelnuestro.com",
+      "trekkinn.com",
+    ],
   },
   {
     category: "Belleza y perfumería",
