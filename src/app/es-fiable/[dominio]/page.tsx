@@ -7,6 +7,7 @@ import { AdSlot } from "@/components/site/ad-slot"
 import { LEVELS, TrustReport } from "@/components/trust/trust-report"
 import { TrustChecker } from "@/components/trust/trust-checker"
 import { TrustGuide } from "@/components/trust/trust-guide"
+import { guideBySlug } from "@/content/guides"
 import { siteConfig } from "@/lib/config"
 import { baseOpenGraph, jsonLd } from "@/lib/seo"
 import { isIndexable, isKnownDomain, isPublishableResult, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
@@ -84,6 +85,21 @@ function faqs(domain: string, r: TrustResult) {
     a: "Contacta primero con la tienda por escrito. Si no responde, pide a tu banco la devolución del cargo, guarda capturas del pedido y denúncialo. En España puedes llamar gratis al 017 del INCIBE.",
   })
   return list
+}
+
+// Dos o tres guías que de verdad sirven a quien duda de una tienda, no la lista entera.
+// Anclas sin «estafa»: en la ficha quedarían junto al nombre de la marca (ver faqs).
+const MARKETPLACES = new Set(["temu.com", "shein.com", "aliexpress.com"])
+function relatedGuides(domain: string) {
+  const picks: Array<[slug: string, label?: string]> = [
+    ["pagar-con-bizum-paypal-o-tarjeta"],
+    MARKETPLACES.has(domain) ? ["son-fiables-temu-shein-aliexpress"] : ["como-reclamar-tienda-online"],
+    ["estafas-black-friday", "Black Friday: cinco comprobaciones antes de pagar"],
+  ]
+  return picks.flatMap(([slug, label]) => {
+    const guide = guideBySlug(slug)
+    return guide ? [{ href: `/guias/${slug}`, label: label ?? guide.title }] : []
+  })
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -221,6 +237,19 @@ export default async function DomainTrustPage({ params }: Props) {
           </div>
         </section>
       )}
+
+      <section className="mx-auto w-full max-w-3xl px-4 pb-16">
+        <h2 className="text-2xl font-extrabold tracking-tight text-primary">Antes de comprar en {domain}</h2>
+        <ul className="mt-4 space-y-2">
+          {relatedGuides(domain).map(({ href, label }) => (
+            <li key={href}>
+              <Link href={href} className="font-semibold text-primary underline underline-offset-4">
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <TrustGuide title={`Cómo comprobar tú mismo si ${domain} es fiable`} />
     </>
