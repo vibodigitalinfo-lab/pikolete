@@ -10,6 +10,7 @@ import { TrustGuide } from "@/components/trust/trust-guide"
 import { siteConfig } from "@/lib/config"
 import { baseOpenGraph, jsonLd } from "@/lib/seo"
 import { isIndexable, isKnownDomain, isPublishableResult, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
+import { storeName } from "@/lib/trust/popular"
 import { getDomainReport } from "@/lib/trust/report"
 import type { TrustResult } from "@/lib/trust/types"
 
@@ -94,7 +95,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { robots: { index: false } }
   }
 
-  const title = `¿Es fiable ${domain}? Comprobamos si es seguro comprar`
+  // La gente busca la marca («druni es fiable»), así que va delante cuando la conocemos.
+  const name = storeName(domain)
+  const title = name
+    ? `¿Es fiable ${name}? Comprobamos si ${domain} es seguro para comprar`
+    : `¿Es fiable ${domain}? Comprobamos si es seguro comprar`
   const description =
     report.status === "ok"
       ? `${LEVELS[report.result.level].title}: ${summary(domain, report.result)} Antigüedad, aviso legal, CIF, contacto y devoluciones.`
@@ -169,7 +174,7 @@ export default async function DomainTrustPage({ params }: Props) {
           › <span className="text-foreground">{domain}</span>
         </nav>
         <h1 className="text-4xl font-extrabold tracking-tight break-words text-primary sm:text-5xl">
-          ¿Es fiable {domain}?
+          ¿Es fiable {storeName(domain) ?? domain}?
         </h1>
         {result ? (
           <>
