@@ -47,7 +47,7 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
   },
   {
     category: "Deporte",
-    domains: ["decathlon.es", "sprinter.es", "jdsports.es", "nike.com", "adidas.es", "forumsport.com", "deporvillage.com", "futbolemotion.com", "padelnuestro.com", "trekkinn.com"],
+    domains: ["decathlon.es", "sprinter.es", "jdsports.es", "nike.com", "adidas.es", "forumsport.com", "futbolemotion.com", "padelnuestro.com", "trekkinn.com"],
   },
   {
     category: "Belleza y perfumería",
@@ -70,7 +70,7 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
   },
   {
     category: "Mascotas",
-    domains: ["tiendanimal.es", "zooplus.es", "kiwoko.com", "miscota.es", "bitiba.es", "animalear.com", "maxizoo.es"],
+    domains: ["tiendanimal.es", "zooplus.es", "kiwoko.com", "bitiba.es"],
   },
 ]
 
@@ -122,7 +122,6 @@ const STORE_NAMES: Record<string, string> = {
   "nike.com": "Nike",
   "adidas.es": "Adidas",
   "forumsport.com": "Forum Sport",
-  "deporvillage.com": "Deporvillage",
   "futbolemotion.com": "Fútbol Emotion",
   "padelnuestro.com": "Padel Nuestro",
   "trekkinn.com": "Trekkinn",
@@ -146,10 +145,7 @@ const STORE_NAMES: Record<string, string> = {
   "tiendanimal.es": "Tiendanimal",
   "zooplus.es": "Zooplus",
   "kiwoko.com": "Kiwoko",
-  "miscota.es": "Miscota",
   "bitiba.es": "Bitiba",
-  "animalear.com": "Animalear",
-  "maxizoo.es": "Maxi Zoo",
 }
 
 export function storeName(domain: string): string | undefined {
