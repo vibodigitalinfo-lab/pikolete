@@ -47,11 +47,32 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
   },
   {
     category: "Deporte",
-    domains: ["decathlon.es", "sprinter.es", "jdsports.es", "nike.com", "adidas.es", "forumsport.com"],
+    domains: [
+      "decathlon.es",
+      "sprinter.es",
+      "jdsports.es",
+      "nike.com",
+      "adidas.es",
+      "forumsport.com",
+      "futbolemotion.com",
+      "padelnuestro.com",
+      "trekkinn.com",
+    ],
   },
   {
     category: "Belleza y perfumería",
-    domains: ["druni.es", "primor.eu", "sephora.es", "notino.es", "douglas.es", "lookfantastic.es"],
+    domains: [
+      "druni.es",
+      "primor.eu",
+      "sephora.es",
+      "notino.es",
+      "douglas.es",
+      "lookfantastic.es",
+      "perfumesclub.com",
+      "maquillalia.com",
+      "arenal.com",
+      "promofarma.com",
+    ],
   },
   {
     category: "Viajes",
@@ -59,7 +80,7 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
   },
   {
     category: "Mascotas",
-    domains: ["tiendanimal.es", "zooplus.es", "kiwoko.com"],
+    domains: ["tiendanimal.es", "zooplus.es", "kiwoko.com", "bitiba.es"],
   },
 ]
 
@@ -111,12 +132,19 @@ const STORE_NAMES: Record<string, string> = {
   "nike.com": "Nike",
   "adidas.es": "Adidas",
   "forumsport.com": "Forum Sport",
+  "futbolemotion.com": "Fútbol Emotion",
+  "padelnuestro.com": "Padel Nuestro",
+  "trekkinn.com": "Trekkinn",
   "druni.es": "Druni",
   "primor.eu": "Primor",
   "sephora.es": "Sephora",
   "notino.es": "Notino",
   "douglas.es": "Douglas",
   "lookfantastic.es": "Lookfantastic",
+  "perfumesclub.com": "Perfumes Club",
+  "maquillalia.com": "Maquillalia",
+  "arenal.com": "Arenal",
+  "promofarma.com": "PromoFarma",
   "booking.com": "Booking",
   "edreams.es": "eDreams",
   "ryanair.com": "Ryanair",
@@ -127,6 +155,7 @@ const STORE_NAMES: Record<string, string> = {
   "tiendanimal.es": "Tiendanimal",
   "zooplus.es": "Zooplus",
   "kiwoko.com": "Kiwoko",
+  "bitiba.es": "Bitiba",
 }
 
 export function storeName(domain: string): string | undefined {
