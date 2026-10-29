@@ -1,0 +1,5 @@
+# Un dominio por línea. Las líneas que empiezan por # se ignoran.
+# Fuentes legítimas para conseguir dominios: tus propias búsquedas, directorios públicos
+# que permitan reutilización (revisa sus condiciones) o listas que te pasen tus clientes.
+ejemplo-clinica.es
+ejemplo-taller.com
