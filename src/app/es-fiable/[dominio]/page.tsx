@@ -60,15 +60,17 @@ function summary(domain: string, r: TrustResult): string {
 
 // Solo hay página para resultados "fiable" o "precaucion" (ver isPublishableResult), así que no hace falta el caso "riesgo".
 // Evitamos la palabra "estafa" junto al nombre de la tienda: Google la asociaría a la marca.
+// Las preguntas usan la marca cuando la conocemos: es como lo busca la gente («druni reseñas», «es de fiar primor»).
 function faqs(domain: string, r: TrustResult) {
+  const name = storeName(domain) ?? domain
   const trust =
     r.level === "fiable"
       ? `En ${domain} no vemos las señales que suelen tener las webs fraudulentas: ${LEVELS.fiable.text.toLowerCase()}`
       : `No vemos señales graves en ${domain}, pero tampoco todas las que tiene una tienda de confianza. Revisa su aviso legal y busca opiniones antes de comprar.`
   const list = [
-    { q: `¿Es de fiar ${domain}?`, a: trust },
+    { q: `¿Es de fiar ${name}?`, a: trust },
     {
-      q: `¿Es seguro comprar en ${domain}?`,
+      q: `¿Es seguro comprar en ${name}?`,
       a: `Nuestra nota para ${domain} es «${LEVELS[r.level].title}». Sea cual sea la web, paga con tarjeta o PayPal, que te permiten reclamar el dinero si el pedido no llega.`,
     },
   ]
@@ -80,8 +82,13 @@ function faqs(domain: string, r: TrustResult) {
       }.`,
     })
   }
+  // No recogemos opiniones propias: decirlo claro y mandar a donde sí las hay es más útil que inventarlas.
   list.push({
-    q: `¿Qué hago si he tenido un problema con ${domain}?`,
+    q: `¿Dónde puedo ver opiniones de ${name}?`,
+    a: `En Pikolete no recogemos opiniones: revisamos señales técnicas y legales de ${domain}. Para ver qué dicen otros clientes, mira sus reseñas en Google (o en Google Maps, si tiene tiendas físicas) y en Trustpilot. Fíjate sobre todo en las más recientes y en cómo responde la tienda a las quejas, y desconfía si casi todas son de cinco estrellas y de los mismos días.`,
+  })
+  list.push({
+    q: `¿Qué hago si he tenido un problema con ${name}?`,
     a: "Contacta primero con la tienda por escrito. Si no responde, pide a tu banco la devolución del cargo, guarda capturas del pedido y denúncialo. En España puedes llamar gratis al 017 del INCIBE.",
   })
   return list
@@ -113,9 +120,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // La gente busca la marca («druni es fiable»), así que va delante cuando la conocemos.
   const name = storeName(domain)
-  const title = name
-    ? `¿Es fiable ${name}? Comprobamos si ${domain} es seguro para comprar`
-    : `¿Es fiable ${domain}? Comprobamos si es seguro comprar`
+  // Corto para que Google no lo corte (~60 caracteres con « · Pikolete»).
+  const title = name ? `¿Es fiable ${name}? Análisis de ${domain}` : `¿Es fiable ${domain}? Análisis de la tienda`
   const description =
     report.status === "ok"
       ? `${LEVELS[report.result.level].title}: ${summary(domain, report.result)} Antigüedad, aviso legal, CIF, contacto y devoluciones.`
@@ -146,6 +152,7 @@ export default async function DomainTrustPage({ params }: Props) {
   // se muestran en el comprobador, sin guardar nada.
   if (result && !isPublishableResult(domain, result)) redirect(`/es-fiable?url=${encodeURIComponent(domain)}`)
   const questions = result ? faqs(domain, result) : []
+  const name = storeName(domain) ?? domain
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -190,7 +197,7 @@ export default async function DomainTrustPage({ params }: Props) {
           › <span className="text-foreground">{domain}</span>
         </nav>
         <h1 className="text-4xl font-extrabold tracking-tight break-words text-primary sm:text-5xl">
-          ¿Es fiable {storeName(domain) ?? domain}?
+          ¿Es fiable {name}?
         </h1>
         {result ? (
           <>
@@ -223,7 +230,7 @@ export default async function DomainTrustPage({ params }: Props) {
 
       {questions.length > 0 && (
         <section className="mx-auto w-full max-w-3xl px-4 pb-16">
-          <h2 className="text-2xl font-extrabold tracking-tight text-primary">Preguntas sobre {domain}</h2>
+          <h2 className="text-2xl font-extrabold tracking-tight text-primary">Preguntas sobre {name}</h2>
           <div className="mt-6 divide-y rounded-2xl border bg-card">
             {questions.map(({ q, a }) => (
               <details key={q} className="group px-6 py-5">
@@ -239,7 +246,7 @@ export default async function DomainTrustPage({ params }: Props) {
       )}
 
       <section className="mx-auto w-full max-w-3xl px-4 pb-16">
-        <h2 className="text-2xl font-extrabold tracking-tight text-primary">Antes de comprar en {domain}</h2>
+        <h2 className="text-2xl font-extrabold tracking-tight text-primary">Antes de comprar en {name}</h2>
         <ul className="mt-4 space-y-2">
           {relatedGuides(domain).map(({ href, label }) => (
             <li key={href}>
