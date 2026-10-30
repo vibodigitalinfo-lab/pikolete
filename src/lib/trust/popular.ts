@@ -43,7 +43,16 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
   },
   {
     category: "Hogar y bricolaje",
-    domains: ["ikea.com", "leroymerlin.es", "conforama.es", "maisonsdumonde.com", "bricomart.es", "sklum.com"],
+    domains: [
+      "ikea.com",
+      "leroymerlin.es",
+      "conforama.es",
+      "maisonsdumonde.com",
+      "bricomart.es",
+      "sklum.com",
+      "jysk.es",
+      "kenayhome.com",
+    ],
   },
   {
     category: "Deporte",
@@ -57,6 +66,8 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
       "futbolemotion.com",
       "padelnuestro.com",
       "trekkinn.com",
+      "deporvillage.com",
+      "atmosferasport.es",
     ],
   },
   {
@@ -72,6 +83,9 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
       "maquillalia.com",
       "arenal.com",
       "promofarma.com",
+      "mifarma.es",
+      "dosfarma.com",
+      "kikocosmetics.com",
     ],
   },
   {
@@ -80,7 +94,15 @@ export const POPULAR_STORES: Array<{ category: string; domains: string[] }> = [
   },
   {
     category: "Mascotas",
-    domains: ["tiendanimal.es", "zooplus.es", "kiwoko.com", "bitiba.es"],
+    domains: [
+      "tiendanimal.es",
+      "zooplus.es",
+      "kiwoko.com",
+      "bitiba.es",
+      "miscota.es",
+      "animalear.com",
+      "piensoymascotas.com",
+    ],
   },
 ]
 
@@ -126,6 +148,8 @@ const STORE_NAMES: Record<string, string> = {
   "maisonsdumonde.com": "Maisons du Monde",
   "bricomart.es": "Bricomart",
   "sklum.com": "Sklum",
+  "jysk.es": "JYSK",
+  "kenayhome.com": "Kenay Home",
   "decathlon.es": "Decathlon",
   "sprinter.es": "Sprinter",
   "jdsports.es": "JD Sports",
@@ -135,6 +159,8 @@ const STORE_NAMES: Record<string, string> = {
   "futbolemotion.com": "Fútbol Emotion",
   "padelnuestro.com": "Padel Nuestro",
   "trekkinn.com": "Trekkinn",
+  "deporvillage.com": "Deporvillage",
+  "atmosferasport.es": "Atmósfera Sport",
   "druni.es": "Druni",
   "primor.eu": "Primor",
   "sephora.es": "Sephora",
@@ -145,6 +171,9 @@ const STORE_NAMES: Record<string, string> = {
   "maquillalia.com": "Maquillalia",
   "arenal.com": "Arenal",
   "promofarma.com": "PromoFarma",
+  "mifarma.es": "Mifarma",
+  "dosfarma.com": "Dosfarma",
+  "kikocosmetics.com": "KIKO Milano",
   "booking.com": "Booking",
   "edreams.es": "eDreams",
   "ryanair.com": "Ryanair",
@@ -156,6 +185,9 @@ const STORE_NAMES: Record<string, string> = {
   "zooplus.es": "Zooplus",
   "kiwoko.com": "Kiwoko",
   "bitiba.es": "Bitiba",
+  "miscota.es": "Miscota",
+  "animalear.com": "Animalear",
+  "piensoymascotas.com": "Piensoymascotas",
 }
 
 export function storeName(domain: string): string | undefined {
