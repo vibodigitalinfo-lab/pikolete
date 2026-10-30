@@ -243,8 +243,8 @@ export const GUIDES: Guide[] = [
     slug: "pagar-con-bizum-paypal-o-tarjeta",
     title: "¿Bizum, PayPal o tarjeta? Cuál es más seguro para comprar online",
     description:
-      "No todas las formas de pago te protegen igual si algo sale mal. Comparamos tarjeta, PayPal, Bizum, transferencia y contra reembolso para compras online.",
-    updated: "2026-10-25",
+      "No todas las formas de pago te protegen igual si algo sale mal. Comparamos tarjeta, PayPal, Bizum, transferencia y contra reembolso, y explicamos si se puede pasar dinero de Bizum a PayPal.",
+    updated: "2026-10-30",
     intro:
       "Cuando una compra sale mal, la forma de pago decide si recuperas el dinero o no. Antes de pagar en una tienda que no conoces, merece la pena elegir bien.",
     sections: [
@@ -267,6 +267,13 @@ export const GUIDES: Guide[] = [
         ],
       },
       {
+        title: "¿Se puede pasar dinero de Bizum a PayPal?",
+        blocks: [
+          "No directamente. Bizum funciona entre cuentas de bancos españoles y PayPal es un monedero aparte, así que no puedes enviar un Bizum a una cuenta de PayPal ni al revés. Lo habitual es dar un rodeo por tu banco: el Bizum llega a tu cuenta bancaria y, si la tienes vinculada a PayPal, desde ahí pagas o recargas saldo. Para sacar dinero de PayPal, lo retiras a esa misma cuenta y luego ya puedes enviarlo por Bizum.",
+          "Si un vendedor te propone «pásame un Bizum y te lo devuelvo por PayPal» o al revés, desconfía: mezclar los dos sistemas suele ser la forma de que pagues por una vía sin protección. Y si alguien te pide un Bizum para «recibir» dinero, no lo aceptes: con Bizum se recibe sin hacer nada, nunca hace falta confirmar un pago para cobrar.",
+        ],
+      },
+      {
         title: "Transferencia y otros",
         blocks: [
           "La transferencia bancaria, Western Union o las criptomonedas son las formas de pago favoritas de los estafadores, precisamente porque el dinero no vuelve. Una tienda que solo acepta estas opciones es una señal de alarma.",
@@ -282,6 +289,10 @@ export const GUIDES: Guide[] = [
       {
         q: "¿Es seguro pagar con Bizum a una tienda?",
         a: "Entre particulares no tienes protección: el dinero no se puede recuperar. Úsalo solo con personas o tiendas que conozcas.",
+      },
+      {
+        q: "¿Puedo enviar dinero de Bizum a PayPal?",
+        a: "No directamente: son sistemas separados. El dinero tiene que pasar por tu cuenta bancaria, que puedes vincular a PayPal para pagar o recargar saldo.",
       },
     ],
   },
