@@ -2,8 +2,14 @@
  * Guías para compradores. Contenido útil y atemporal que da a Google (y a AdSense) páginas con texto propio,
  * y que lleva al comprobador. Cada bloque es un párrafo o, si es un array, una lista.
  */
+import { WEB_GUIDES } from "@/content/guides-web"
+
+export type GuideTopic = "compras" | "web"
+
 export interface Guide {
   slug: string
+  /** «compras» (por defecto): para quien compra online. «web»: para quien tiene una web. */
+  topic?: GuideTopic
   title: string
   description: string
   updated: string
@@ -12,7 +18,7 @@ export interface Guide {
   faqs: Array<{ q: string; a: string }>
 }
 
-export const GUIDES: Guide[] = [
+const SHOPPING_GUIDES: Guide[] = [
   {
     slug: "estafas-black-friday",
     title: "Black Friday 2026: cómo comprar online sin caer en estafas",
@@ -341,5 +347,9 @@ export const GUIDES: Guide[] = [
     ],
   },
 ]
+
+export const GUIDES: Guide[] = [...SHOPPING_GUIDES, ...WEB_GUIDES]
+
+export const guideTopic = (g: Guide): GuideTopic => g.topic ?? "compras"
 
 export const guideBySlug = (slug: string) => GUIDES.find((g) => g.slug === slug)
