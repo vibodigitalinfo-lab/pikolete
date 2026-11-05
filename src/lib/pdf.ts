@@ -37,7 +37,7 @@ function latin1(text: string): string {
 }
 
 /**
- * Construye el informe en PDF (navegador o servidor). Si el informe está desbloqueado es el "Informe oficial"
+ * Construye el informe en PDF (navegador o servidor). Si el informe está desbloqueado es el "Informe completo"
  * con todas las soluciones; si no, el básico con diagnósticos y las soluciones gratuitas.
  */
 export async function buildReportPdf(result: AuditResult) {
@@ -80,7 +80,7 @@ export async function buildReportPdf(result: AuditResult) {
   doc.text("PIKOLETE INSPECTOR  ·  BOLETIN DE DENUNCIA", M, 40)
   doc.setFontSize(24)
   doc.setTextColor(255, 255, 255)
-  doc.text(official ? "Informe oficial de inspeccion" : "Informe basico de inspeccion", M, 70)
+  doc.text(official ? "Informe completo de inspeccion" : "Informe basico de inspeccion", M, 70)
   doc.setFont("helvetica", "normal")
   doc.setFontSize(10)
   doc.text(
@@ -168,7 +168,7 @@ export async function buildReportPdf(result: AuditResult) {
         }
       } else if (check.locked) {
         paragraph(
-          `Solucion bloqueada. Desbloquea gratis el informe oficial en ${siteConfig.url.replace("https://", "")}`,
+          `Solucion bloqueada. Desbloquea gratis el informe completo en ${siteConfig.url.replace("https://", "")}`,
           9,
           AMBER,
           "helvetica",
@@ -190,7 +190,7 @@ export async function buildReportPdf(result: AuditResult) {
     doc.text(latin1("Desbloquea gratis todas las soluciones"), M + 16, y + 26)
     doc.setFont("helvetica", "normal")
     doc.setFontSize(9.5)
-    doc.text(latin1(`Guia paso a paso, codigo listo para copiar e informe oficial en ${siteConfig.url.replace("https://", "")}`), M + 16, y + 44)
+    doc.text(latin1(`Guia paso a paso, codigo listo para copiar e informe completo en ${siteConfig.url.replace("https://", "")}`), M + 16, y + 44)
   }
 
   const pages = doc.getNumberOfPages()

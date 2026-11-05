@@ -3,7 +3,6 @@ export const siteConfig = {
   tagline: "Auditor Web & SEO Express",
   url: "https://pikolete.com",
   quoteEmail: process.env.NEXT_PUBLIC_QUOTE_EMAIL ?? "hola@pikolete.com",
-  auditedCount: "+1.000",
   /** Google AdSense: ID de editor y bloques de anuncio (opcionales; sin bloque, solo anuncios automáticos). */
   adsense: {
     client: process.env.NEXT_PUBLIC_ADSENSE_CLIENT ?? "ca-pub-9478834967463774",

@@ -9,7 +9,7 @@ const SAMPLE = [
 ]
 
 /** Ejemplo visual de una "multa" para el hero. */
-export function TicketPreview({ auditedCount }: { auditedCount: string }) {
+export function TicketPreview() {
   return (
     <div className="relative mx-auto w-full max-w-sm" aria-hidden="true">
       <PikoleteMascot className="absolute -top-16 -right-2 z-10 size-28 rotate-6 drop-shadow-md" />
@@ -39,7 +39,7 @@ export function TicketPreview({ auditedCount }: { auditedCount: string }) {
           </li>
         </ul>
         <div className="flex items-center justify-between border-t border-dashed px-5 py-3 text-xs text-muted-foreground">
-          <span>{auditedCount} webs auditadas</span>
+          <span>Ejemplo de informe</span>
           <span className="rounded border-2 border-danger px-1.5 py-0.5 font-black tracking-wider text-danger uppercase -rotate-6">
             Multado
           </span>

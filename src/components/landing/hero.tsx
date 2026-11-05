@@ -3,7 +3,6 @@ import { BadgeCheck, Clock, Lock } from "lucide-react"
 import { PikoleteMascot } from "@/components/brand/pikolete-logo"
 import { InspectForm } from "@/components/landing/inspect-form"
 import { TicketPreview } from "@/components/landing/ticket-preview"
-import { siteConfig } from "@/lib/config"
 
 export function Hero() {
   return (
@@ -36,7 +35,7 @@ export function Hero() {
             </li>
           </ul>
         </div>
-        <TicketPreview auditedCount={siteConfig.auditedCount} />
+        <TicketPreview />
       </div>
     </section>
   )

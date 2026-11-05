@@ -77,10 +77,10 @@ export const LeadGate = forwardRef<HTMLDivElement, LeadGateProps>(function LeadG
       <div className="grid gap-8 p-6 sm:p-8 md:grid-cols-[0.9fr_1.1fr]">
         <div>
           <p className="flex items-center gap-2 text-sm font-bold tracking-wider text-badge uppercase">
-            <Lock className="size-4" /> {lockedCount > 0 ? `${lockedCount} soluciones bloqueadas` : "Informe oficial"}
+            <Lock className="size-4" /> {lockedCount > 0 ? `${lockedCount} soluciones bloqueadas` : "Informe completo"}
           </p>
           <h2 className="mt-2 text-2xl font-extrabold text-balance">
-            Desbloquea gratis el informe completo y el PDF oficial
+            Desbloquea gratis el informe completo y el PDF completo
           </h2>
           <p className="mt-3 text-sm text-primary-foreground/75">
             Sin tarjeta y sin coste. Solo te pedimos tus datos de contacto para enviarte novedades del informe y,
@@ -91,7 +91,7 @@ export const LeadGate = forwardRef<HTMLDivElement, LeadGateProps>(function LeadG
               <Sparkles className="size-4 text-badge" /> Guía paso a paso de cada fallo
             </li>
             <li className="flex items-center gap-2">
-              <FileText className="size-4 text-badge" /> Código listo para copiar y PDF oficial
+              <FileText className="size-4 text-badge" /> Código listo para copiar y PDF completo
             </li>
             <li className="flex items-center gap-2">
               <Gift className="size-4 text-badge" /> 100% gratis, para siempre

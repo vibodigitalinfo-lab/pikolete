@@ -20,7 +20,7 @@ const PLANS = [
       "Todo lo de la inspección express",
       "Guía de solución paso a paso de cada fallo",
       "Código listo para copiar y pegar",
-      "Informe PDF oficial descargable",
+      "Informe PDF completo descargable",
     ],
     featured: true,
   },

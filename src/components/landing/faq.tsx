@@ -9,7 +9,7 @@ export const FAQS = [
   },
   {
     q: "¿De verdad es gratis?",
-    a: "Sí. La inspección es gratis y sin registro. Para ver todas las soluciones y descargar el PDF oficial solo te pedimos tu email: no hay tarjeta ni pagos. Pikolete se mantiene gracias a los anuncios.",
+    a: "Sí. La inspección es gratis y sin registro. Para ver todas las soluciones y descargar el PDF completo solo te pedimos tu email: no hay tarjeta ni pagos. Pikolete se mantiene gracias a los anuncios.",
   },
   {
     q: "¿Qué hacéis con mis datos?",
