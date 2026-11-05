@@ -82,7 +82,7 @@ export function IssueItem({ check, onUnlock }: { check: AuditCheck; onUnlock: ()
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-card/40 p-4 text-center">
                 <p className="flex items-center gap-1.5 text-sm font-semibold">
                   <Lock className="size-4 text-primary" />
-                  Desbloquea gratis la guía de solución paso a paso y el informe PDF oficial
+                  Desbloquea gratis la guía de solución paso a paso y el informe PDF completo
                 </p>
                 <Button size="sm" onClick={onUnlock}>
                   Desbloquear gratis

@@ -1,9 +1,7 @@
-import { FileCheck2, Gauge, ListChecks, Timer } from "lucide-react"
-
-import { siteConfig } from "@/lib/config"
+import { BadgeEuro, Gauge, ListChecks, Timer } from "lucide-react"
 
 const STATS = [
-  { icon: FileCheck2, value: siteConfig.auditedCount, label: "webs auditadas" },
+  { icon: BadgeEuro, value: "0 €", label: "siempre gratis" },
   { icon: ListChecks, value: "26", label: "controles por inspección" },
   { icon: Timer, value: "< 15 s", label: "por informe" },
   { icon: Gauge, value: "0–100", label: "nota ponderada" },

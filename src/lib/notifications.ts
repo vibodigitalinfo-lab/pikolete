@@ -61,7 +61,7 @@ export async function sendReportEmail(lead: Lead): Promise<MailResult> {
   const html = layout(
     `Tu informe de ${esc(host)}`,
     `<p>${greeting}</p>
-<p>El agente Pikolete ha terminado la inspección de <strong>${esc(host)}</strong>. Te adjuntamos el <strong>informe oficial en PDF</strong> con la solución paso a paso de cada fallo.</p>
+<p>El agente Pikolete ha terminado la inspección de <strong>${esc(host)}</strong>. Te adjuntamos el <strong>informe completo en PDF</strong> con la solución paso a paso de cada fallo.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px 0;width:100%;background:#f6f4ef;border-radius:10px"><tr>
 <td style="padding:16px 18px;width:90px"><span style="font-size:38px;font-weight:bold;color:${scoreColor}">${result.score}</span><span style="color:#6e7387">/100</span></td>
 <td style="padding:16px 18px;color:#23283c">Nota <strong>${result.grade}</strong><br><span style="color:#6e7387;font-size:13px">${fails} infracciones · ${issues.length - fails} advertencias</span></td>
@@ -81,7 +81,7 @@ ${
     lead.name ? `Hola ${lead.name},` : "Hola,",
     "",
     `Tu informe de ${host}: nota ${result.score}/100 (${result.grade}). ${fails} infracciones y ${issues.length - fails} advertencias.`,
-    "Adjuntamos el informe oficial en PDF con la solución paso a paso de cada fallo.",
+    "Adjuntamos el informe completo en PDF con la solución paso a paso de cada fallo.",
     ...top.map((c) => `- ${c.title}: ${c.diagnosis}`),
     "",
     `${siteConfig.url}`,

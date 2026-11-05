@@ -105,7 +105,7 @@ export function ResultsView({ url }: { url: string }) {
       {justUnlocked && result.unlocked && (
         <div className="mb-6 flex items-center gap-3 rounded-xl border border-success/30 bg-success/10 p-4 text-sm font-medium">
           <PartyPopper className="size-5 text-success" />
-          ¡Gracias! Ya tienes desbloqueadas todas las soluciones y el informe PDF oficial.
+          ¡Gracias! Ya tienes desbloqueadas todas las soluciones y el informe PDF completo.
         </div>
       )}
 
@@ -143,7 +143,7 @@ export function ResultsView({ url }: { url: string }) {
             <div className="mt-5 flex flex-wrap gap-2">
               {result.unlocked ? (
                 <Button onClick={() => void downloadReportPdf(result)}>
-                  <FileDown /> Descargar informe PDF oficial
+                  <FileDown /> Descargar informe PDF completo
                 </Button>
               ) : (
                 <Button onClick={scrollToGate}>
@@ -212,7 +212,7 @@ export function ResultsView({ url }: { url: string }) {
             })}
           </Tabs>
 
-          {/* Siempre que no esté desbloqueado: aunque no haya soluciones ocultas, el email da el PDF oficial. */}
+          {/* Siempre que no esté desbloqueado: aunque no haya soluciones ocultas, el email da el PDF completo. */}
           {!result.unlocked && (
             <LeadGate
               ref={gateRef}
@@ -232,7 +232,7 @@ export function ResultsView({ url }: { url: string }) {
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           {result.unlocked ? (
             <div className="rounded-2xl border bg-card p-6">
-              <h2 className="font-bold">Tu informe oficial</h2>
+              <h2 className="font-bold">Tu informe completo</h2>
               <p className="mt-1 text-sm text-muted-foreground">Todas las soluciones, listo para compartir con tu equipo.</p>
               <Button className="mt-4 w-full" onClick={() => void downloadReportPdf(result)}>
                 <FileDown /> Descargar PDF
@@ -243,8 +243,8 @@ export function ResultsView({ url }: { url: string }) {
               <h2 className="font-bold">Informe completo gratis</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {lockedCount > 0
-                  ? `Desbloquea las ${lockedCount} soluciones restantes y el PDF oficial solo con tu email.`
-                  : "Recibe el PDF oficial de la inspección en tu email."}
+                  ? `Desbloquea las ${lockedCount} soluciones restantes y el PDF completo solo con tu email.`
+                  : "Recibe el PDF completo de la inspección en tu email."}
               </p>
               <Button className="mt-4 w-full" onClick={scrollToGate}>
                 <Lock /> Desbloquear gratis
