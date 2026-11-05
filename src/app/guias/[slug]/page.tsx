@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react"
 
 import { AdSlot } from "@/components/site/ad-slot"
 import { TrustChecker } from "@/components/trust/trust-checker"
-import { GUIDES, guideBySlug } from "@/content/guides"
+import { GUIDES, guideBySlug, guideTopic } from "@/content/guides"
 import { siteConfig } from "@/lib/config"
 import { baseOpenGraph, jsonLd } from "@/lib/seo"
 
@@ -67,7 +67,7 @@ export default async function GuidePage({ params }: Props) {
       },
     ],
   }
-  const others = GUIDES.filter((g) => g.slug !== guide.slug)
+  const others = GUIDES.filter((g) => g.slug !== guide.slug && guideTopic(g) === guideTopic(guide))
 
   return (
     <>
@@ -86,12 +86,27 @@ export default async function GuidePage({ params }: Props) {
         <p className="mt-3 text-sm text-muted-foreground">Actualizado el {formatDate(guide.updated)}</p>
         <p className="mt-6 text-lg text-pretty text-foreground/85">{guide.intro}</p>
 
-        <div className="mt-8 rounded-2xl border bg-card p-6">
-          <p className="font-bold text-primary">¿Dudas de una tienda? Compruébala antes de pagar</p>
-          <div className="mt-4">
-            <TrustChecker />
+        {guideTopic(guide) === "web" ? (
+          <div className="mt-8 rounded-2xl border bg-card p-6">
+            <p className="font-bold text-primary">¿Quieres saber cómo está tu web?</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              El inspector de Pikolete revisa gratis 26 puntos de SEO, velocidad, seguridad y estructura en unos segundos.
+            </p>
+            <Link
+              href="/#inspeccion"
+              className="mt-4 inline-block rounded-md bg-primary px-4 py-2 font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              Inspeccionar mi web gratis
+            </Link>
           </div>
-        </div>
+        ) : (
+          <div className="mt-8 rounded-2xl border bg-card p-6">
+            <p className="font-bold text-primary">¿Dudas de una tienda? Compruébala antes de pagar</p>
+            <div className="mt-4">
+              <TrustChecker />
+            </div>
+          </div>
+        )}
 
         {guide.sections.map((section, i) => (
           <section key={section.title} className="mt-10">
@@ -139,11 +154,13 @@ export default async function GuidePage({ params }: Props) {
               </Link>
             </li>
           ))}
-          <li>
-            <Link href="/es-fiable/tiendas" className="font-semibold text-primary underline underline-offset-4">
-              ¿Son fiables las tiendas más populares?
-            </Link>
-          </li>
+          {guideTopic(guide) === "compras" && (
+            <li>
+              <Link href="/es-fiable/tiendas" className="font-semibold text-primary underline underline-offset-4">
+                ¿Son fiables las tiendas más populares?
+              </Link>
+            </li>
+          )}
         </ul>
       </section>
     </>
