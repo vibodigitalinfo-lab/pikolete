@@ -118,8 +118,10 @@ export default function PrivacidadPage() {
       <Section title="7. Cookies y almacenamiento local">
         <p>
           Usamos una cookie técnica propia (<code>pk_unlock</code>) que recuerda que has desbloqueado el informe de un
-          dominio durante 30 días, y almacenamiento de sesión del navegador para recordar por qué página llegaste. Estas
-          no necesitan tu consentimiento.
+          dominio durante 30 días, y almacenamiento de sesión del navegador para recordar por qué página llegaste. Si usas el comprobador
+          «¿Es fiable esta web?», guardamos en el almacenamiento local de tu navegador la lista de tus últimas
+          comprobaciones (dominio, resultado y fecha) para que puedas repetirlas; no sale de tu equipo y puedes
+          borrarla con el botón «Borrar historial». Nada de esto necesita tu consentimiento.
         </p>
         <p>
           Además, Google AdSense instala cookies de terceros para mostrar anuncios. Al entrar por primera vez verás un
