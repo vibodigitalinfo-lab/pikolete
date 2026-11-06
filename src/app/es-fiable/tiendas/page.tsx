@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { Suspense } from "react"
 
 import { TrustChecker } from "@/components/trust/trust-checker"
+import { UserCheckedStores } from "@/components/trust/user-checked-stores"
 import { siteConfig } from "@/lib/config"
 import { baseOpenGraph, jsonLd } from "@/lib/seo"
 import { publishedPopularStores } from "@/lib/trust/report"
@@ -71,6 +73,10 @@ export default async function TiendasPage() {
           </div>
         ))}
       </section>
+
+      <Suspense fallback={null}>
+        <UserCheckedStores />
+      </Suspense>
 
       <section className="mx-auto w-full max-w-4xl px-4 pb-24">
         <h2 className="text-2xl font-extrabold tracking-tight text-primary">Comprueba otra tienda</h2>
