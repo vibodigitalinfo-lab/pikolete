@@ -139,6 +139,14 @@ export function TrustReport({
               <div>
                 <p className="font-semibold">{s.label}</p>
                 <p className="text-sm text-muted-foreground">{s.detail}</p>
+                {s.id === "age" && (
+                  <Link
+                    href="/guias/cuando-se-creo-una-web"
+                    className="mt-1 inline-block text-sm font-semibold text-primary underline underline-offset-4"
+                  >
+                    Cómo comprobar tú mismo cuándo se creó una web
+                  </Link>
+                )}
               </div>
             </li>
           );

@@ -94,11 +94,12 @@ function faqs(domain: string, r: TrustResult) {
   return list
 }
 
-// Dos o tres guías que de verdad sirven a quien duda de una tienda, no la lista entera.
+// Tres o cuatro guías que de verdad sirven a quien duda de una tienda, no la lista entera.
 // Anclas sin «estafa»: en la ficha quedarían junto al nombre de la marca (ver faqs).
 const MARKETPLACES = new Set(["temu.com", "shein.com", "aliexpress.com"])
 function relatedGuides(domain: string) {
   const picks: Array<[slug: string, label?: string]> = [
+    ["cuando-se-creo-una-web", `Cómo saber desde cuándo existe ${domain}`],
     ["pagar-con-bizum-paypal-o-tarjeta"],
     MARKETPLACES.has(domain) ? ["son-fiables-temu-shein-aliexpress"] : ["como-reclamar-tienda-online"],
     ["estafas-black-friday", "Black Friday: cinco comprobaciones antes de pagar"],

@@ -192,6 +192,10 @@ export default function EsFiablePage() {
           ¿Se acerca el Black Friday?{" "}
           <Link href="/guias/estafas-black-friday" className="font-semibold text-primary underline underline-offset-4">
             Lee cómo comprar sin caer en estafas
+          </Link>
+          ,{" "}
+          <Link href="/guias/cuando-se-creo-una-web" className="font-semibold text-primary underline underline-offset-4">
+            cómo saber cuándo se creó una web
           </Link>{" "}
           y el resto de{" "}
           <Link href="/guias" className="font-semibold text-primary underline underline-offset-4">
