@@ -141,6 +141,15 @@ export default function MetodologiaPage() {
           </table>
         </div>
         <p>
+          Si quieres comprobar la antigüedad por tu cuenta, o la terminación del
+          dominio (como .es) no permite consultarla de forma automática, te
+          explicamos cómo en{" "}
+          <Link href="/guias/cuando-se-creo-una-web" className="text-primary underline">
+            cómo saber cuándo se creó una página web
+          </Link>
+          .
+        </p>
+        <p>
           Primero miramos si la web vende. A un blog o a la web de una empresa
           no le pedimos devoluciones ni formas de pago, y no le hablamos de
           «comprar».

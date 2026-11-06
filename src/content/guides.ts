@@ -303,6 +303,119 @@ const SHOPPING_GUIDES: Guide[] = [
     ],
   },
   {
+    slug: "cuando-se-creo-una-web",
+    title: "Cómo saber cuándo se creó una página web (y quién está detrás)",
+    description:
+      "Cuatro formas gratuitas de averiguar la antigüedad de una web o de un dominio, también de los .es, cómo leer el resultado y el truco de los dominios caducados que usan algunas tiendas falsas.",
+    updated: "2026-11-06",
+    intro:
+      "La fecha en que se registró un dominio es una de las pistas más útiles para saber si una tienda online es de fiar: las webs fraudulentas suelen durar semanas, no años. Es un dato público y se consulta gratis en un minuto. Aquí tienes cómo hacerlo, qué significa cada fecha y en qué casos la antigüedad engaña.",
+    sections: [
+      {
+        title: "Por qué importa la antigüedad",
+        blocks: [
+          "Montar una tienda falsa es barato, pero dura poco: en cuanto llegan las primeras denuncias, los bancos y los navegadores la marcan y quien la creó registra otro dominio y vuelve a empezar. Por eso casi todas las webs fraudulentas tienen pocos meses de vida, y por eso en Pikolete un dominio de menos de seis meses nunca puede salir «Pinta fiable».",
+          "Lo contrario no es cierto: un dominio nuevo no significa que la tienda sea falsa. Cada día abren negocios honrados. Simplemente, cuando la web es muy reciente conviene mirar con más calma el resto de señales antes de pagar.",
+        ],
+      },
+      {
+        title: "1. Consulta el registro del dominio (Whois o RDAP)",
+        blocks: [
+          "Todo dominio tiene una ficha pública en el registro que lo gestiona, con la fecha de alta. Antes se consultaba con un servicio llamado Whois; hoy el sistema oficial se llama RDAP, pero muchas webs siguen usando el nombre antiguo.",
+          [
+            "Para .com, .net, .org, .shop, .store y casi todas las demás terminaciones: entra en lookup.icann.org, el buscador oficial de ICANN, escribe el dominio y busca el apartado «Creation Date» o «Registration».",
+            "Para los .es: el registro español no forma parte de ese sistema. Usa el buscador Whois de dominios.es, la web oficial de Red.es, que muestra la fecha de alta.",
+            "Para otros dominios de país (.fr, .it, .pt, .de…): cada país tiene su propio registro con un buscador similar. Suele aparecer buscando «whois» seguido de la terminación.",
+          ],
+          "Escribe solo el dominio, sin «https://» ni «www»: por ejemplo, tienda-ejemplo.com.",
+        ],
+      },
+      {
+        title: "Cómo leer las fechas del registro",
+        blocks: [
+          [
+            "Fecha de creación o registro: la que importa. Es el día en que alguien dio de alta el dominio por primera vez (o la última vez que se volvió a registrar después de caducar).",
+            "Fecha de actualización: cambia con cualquier modificación, como una renovación o un cambio de servidores. No dice nada por sí sola.",
+            "Fecha de caducidad: hasta cuándo está pagado. Mucha gente lo paga año a año, así que caducar dentro de pocos meses es normal y no es una mala señal.",
+            "Titular: casi nunca aparece. Desde 2018, por la protección de datos europea, los registros ocultan el nombre de los particulares y muchas empresas usan servicios de privacidad. Que esté oculto es lo habitual.",
+          ],
+        ],
+      },
+      {
+        title: "2. Mira el archivo de Internet",
+        blocks: [
+          "La Wayback Machine (web.archive.org) guarda copias de millones de webs desde 1996. Escribe el dominio y verás un calendario con las fechas en que se guardó una copia; la primera te da una idea de desde cuándo existe la web.",
+          "Lo más útil es abrir las copias antiguas y ver qué había. Si una tienda de zapatillas dice llevar diez años vendiendo, pero hace seis meses ese dominio era un blog de recetas en otro idioma, ya sabes que la historia no cuadra.",
+          "Que no haya ninguna copia no prueba nada: el archivo no guarda todas las webs, sobre todo las pequeñas. Pero si dice tener años de trayectoria y no hay rastro de ella, es un dato más.",
+        ],
+      },
+      {
+        title: "El truco de los dominios caducados",
+        blocks: [
+          "Cuando un dominio deja de pagarse, queda libre y cualquiera puede comprarlo. Algunas tiendas falsas lo aprovechan: compran dominios antiguos que han caducado para parecer webs con historia. Según el registro, la fecha de alta puede ser reciente (si caducó del todo) o antigua (si se compró antes de borrarse), y por eso conviene cruzarla con la Wayback Machine.",
+          "La señal típica es un cambio brusco: años de contenido sobre un tema, un hueco y, de repente, una tienda con descuentos enormes de algo que no tiene nada que ver.",
+        ],
+      },
+      {
+        title: "3. Consulta el primer certificado de seguridad",
+        blocks: [
+          "Cada vez que se emite un certificado HTTPS para un dominio, queda anotado en unos registros públicos llamados de transparencia de certificados. En crt.sh puedes escribir el dominio y ordenar por fecha para ver el más antiguo.",
+          "Es una forma rápida de saber desde cuándo funciona la web con su dominio actual, y de comprobar algo que el Whois no dice: una tienda que presume de años de experiencia pero cuyo primer certificado es del mes pasado.",
+        ],
+      },
+      {
+        title: "4. Busca a la empresa, no solo a la web",
+        blocks: [
+          "En España, toda web que vende tiene que publicar en el aviso legal quién está detrás: razón social, CIF o NIF y una dirección. Con ese dato puedes averiguar la antigüedad de la empresa, que a veces es mayor que la de la web (una tienda física que se pasa a Internet) y otras veces delata el engaño.",
+          [
+            "Copia la razón social o el CIF en un buscador. Los directorios de empresas muestran la fecha de constitución y la actividad.",
+            "Si es una sociedad, su constitución se publica en el BORME, el Boletín Oficial del Registro Mercantil, que se consulta gratis en boe.es.",
+            "Desconfía si el CIF no corresponde a ninguna empresa, si la empresa se dedica a algo muy distinto o si la dirección es de otro país sin que la web lo diga.",
+          ],
+        ],
+      },
+      {
+        title: "Lo que no sirve para saber la antigüedad",
+        blocks: [
+          [
+            "El año del pie de página («© 2015-2026»). Lo escribe la propia web y muchas plantillas lo ponen solo.",
+            "Frases como «desde 1998» o «más de 20 años de experiencia». Sin un dominio, una empresa o un archivo que lo respalden, no valen nada.",
+            "El número de seguidores en redes sociales. Se compran por poco dinero.",
+            "Las reseñas de la propia web. Las controla la tienda.",
+          ],
+        ],
+      },
+      {
+        title: "La forma rápida",
+        blocks: [
+          "Si no quieres hacerlo a mano, el comprobador de Pikolete consulta el registro del dominio por ti y te dice su antigüedad junto con otras señales: si la conexión es segura, si hay aviso legal y CIF, si tiene datos de contacto y política de devoluciones. Para algunas terminaciones, como los .es, el registro no permite consultar la fecha de forma automática; en ese caso te lo indicamos y puedes mirarla en dominios.es como se explica arriba.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "¿Cómo puedo saber gratis la antigüedad de un dominio?",
+        a: "Escribe el dominio en lookup.icann.org (para .com y la mayoría de terminaciones) o en el buscador Whois de dominios.es (para los .es) y mira la fecha de creación. Es gratis y no hace falta registrarse.",
+      },
+      {
+        q: "¿Un dominio antiguo significa que la web es fiable?",
+        a: "No necesariamente. Es una buena señal, pero un dominio caducado puede haberlo comprado otra persona. Comprueba en la Wayback Machine que la web siempre se ha dedicado a lo mismo y revisa el aviso legal.",
+      },
+      {
+        q: "¿Por qué no aparece el dueño del dominio?",
+        a: "Por la protección de datos. Desde 2018 los registros ocultan los datos de los particulares y muchas empresas usan servicios de privacidad. Para saber quién está detrás de una tienda, mira su aviso legal: en España está obligada a dar su razón social y su CIF.",
+      },
+      {
+        q: "¿Cuántos meses tiene que tener una tienda para fiarse?",
+        a: "No hay una cifra mágica. Como referencia, la mayoría de tiendas fraudulentas tienen menos de seis meses. Si la tienda es más nueva, no la descartes solo por eso, pero exige que el resto de señales estén bien y paga con tarjeta o PayPal.",
+      },
+      {
+        q: "¿Qué significa que la fecha de actualización sea reciente?",
+        a: "Casi nada. Cambia con cualquier renovación o ajuste técnico. La fecha que importa es la de creación o registro.",
+      },
+    ],
+  },
+  {
     slug: "son-fiables-temu-shein-aliexpress",
     title: "¿Son fiables Temu, Shein y AliExpress? Lo que debes saber antes de comprar",
     description:
