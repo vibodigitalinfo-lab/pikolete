@@ -5,10 +5,12 @@ import Link from "next/link"
 import { ArrowRight, Globe, Loader2, Search } from "lucide-react"
 
 import { AdSlot } from "@/components/site/ad-slot"
+import { MyHistory } from "@/components/trust/my-history"
 import { TrustReport } from "@/components/trust/trust-report"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { siteConfig } from "@/lib/config"
+import { addToHistory } from "@/lib/trust/history"
 import type { TrustResult } from "@/lib/trust/types"
 import { cn } from "@/lib/utils"
 
@@ -37,6 +39,7 @@ export function TrustChecker() {
         return
       }
       setResult(data)
+      addToHistory(data)
       window.history.replaceState(null, "", `?url=${encodeURIComponent(value)}`)
       requestAnimationFrame(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }))
     } catch {
@@ -115,6 +118,16 @@ export function TrustChecker() {
           </p>
         )}
       </form>
+
+      {!result && (
+        <MyHistory
+          disabled={pending}
+          onRecheck={(host) => {
+            setUrl(host)
+            void check(host)
+          }}
+        />
+      )}
 
       {result && (
         <div ref={resultRef} className="mt-10 scroll-mt-24 space-y-4" aria-live="polite">
