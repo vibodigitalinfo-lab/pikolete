@@ -12,7 +12,7 @@ import { siteConfig } from "@/lib/config"
 import { baseOpenGraph, jsonLd } from "@/lib/seo"
 import { isIndexable, isKnownDomain, isPublishableResult, isValidDomainSlug, recentDomains } from "@/lib/trust/recent"
 import { storeName } from "@/lib/trust/popular"
-import { getDomainReport } from "@/lib/trust/report"
+import { getDomainReport, publishedPopularStores } from "@/lib/trust/report"
 import type { TrustResult } from "@/lib/trust/types"
 
 type Props = PageProps<"/es-fiable/[dominio]">
@@ -153,6 +153,9 @@ export default async function DomainTrustPage({ params }: Props) {
   if (result && !isPublishableResult(domain, result)) redirect(`/es-fiable?url=${encodeURIComponent(domain)}`)
   const questions = result ? faqs(domain, result) : []
   const name = storeName(domain) ?? domain
+  // Tiendas de la misma categoría del directorio: lo siguiente que suele mirar quien compara dónde comprar.
+  const group = (await publishedPopularStores()).find((g) => g.domains.includes(domain))
+  const siblings = group ? group.domains.filter((d) => d !== domain).slice(0, 8) : []
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -256,6 +259,31 @@ export default async function DomainTrustPage({ params }: Props) {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="mx-auto w-full max-w-3xl px-4 pb-16">
+        <h2 className="text-2xl font-extrabold tracking-tight text-primary">
+          {group ? `Más tiendas: ${group.category}` : "Otras tiendas populares"}
+        </h2>
+        {siblings.length > 0 && (
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {siblings.map((d) => (
+              <li key={d}>
+                <Link
+                  href={`/es-fiable/${d}`}
+                  className="inline-block rounded-full border bg-card px-3 py-1 text-sm hover:border-primary hover:text-primary"
+                >
+                  ¿Es fiable {storeName(d) ?? d}?
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="mt-4">
+          <Link href="/es-fiable/tiendas" className="font-semibold text-primary underline underline-offset-4">
+            Ver todas las tiendas revisadas
+          </Link>
+        </p>
       </section>
 
       <TrustGuide title={`Cómo comprobar tú mismo si ${domain} es fiable`} />

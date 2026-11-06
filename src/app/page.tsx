@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 
+import { Explore } from "@/components/landing/explore"
 import { Faq, FAQS } from "@/components/landing/faq"
 import { Hero } from "@/components/landing/hero"
 import { HowItWorks } from "@/components/landing/how-it-works"
@@ -69,6 +70,7 @@ export default function Home() {
       <AdSlot slot={siteConfig.adsense.slots.landing} className="mx-auto max-w-6xl px-4" />
       <HowItWorks />
       <Pricing />
+      <Explore />
       <Faq />
     </>
   )
